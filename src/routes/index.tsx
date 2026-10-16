@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  ArrowRight, BarChart3, Radio, Gavel, Sparkles, GraduationCap, CheckCircle2, Users, ShoppingBag, Zap,
+  ArrowRight, BarChart3, Radio, Gavel, Sparkles, GraduationCap, CheckCircle2, Users, ShoppingBag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
