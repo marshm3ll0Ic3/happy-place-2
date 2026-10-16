@@ -47,5 +47,16 @@
   "wallet.history": "История",
   "wallet.noHistory": "Транзакций пока нет.",
   "legal.purchasedUse": "Купленные DSC можно тратить только на бронирование охвата и сборы аукционов. Их нельзя ставить на рынках или выводить; возврат только на исходную карту.",
-  "wallet.demoMode": "Демо-режим: карта не списывается."
+  "wallet.demoMode": "Демо-режим: карта не списывается.",
+  "landing.yes": "ДА",
+  "landing.no": "НЕТ",
+  "landing.trending": "В тренде",
+  "landing.stat.creators": "Авторов",
+  "landing.stat.volume": "DSC в обороте",
+  "landing.stat.markets": "Активных рынков",
+  "landing.liveTitle": "Рынки онлайн",
+  "landing.seeAll": "Все",
+  "landing.ctaTitle": "У вашей аудитории есть цена.",
+  "landing.ctaBody": "Присоединяйтесь бесплатно и получите промо-DSC, чтобы начать уже сегодня.",
+  "landing.ctaButton": "Начать"
 }
