@@ -15,6 +15,13 @@
       "when": 1792143419161,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792148826611,
+      "tag": "0002_create_orders_table",
+      "breakpoints": true
     }
   ]
 }
