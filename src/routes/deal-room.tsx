@@ -113,7 +113,7 @@ function DealRoom() {
                   <span className={`font-mono rounded-sm border px-2 py-0.5 text-[10px] uppercase ${d.kind === "sale" ? "border-primary/50 text-primary" : "border-yes/40 text-yes"}`}>{t(`dr.${d.kind}`)}</span>
                 </div>
                 <div className="mt-5 grid grid-cols-3 divide-x divide-border rounded-sm border border-border">
-                  {[["dr.aud", d.aud.toLocaleString("en-US")], ["dr.profit", eur(d.profit)], [d.kind === "sale" ? "dr.ask" : "dr.mrent", eur(d.price)]].map(([k, v]) => (
+                  {([["dr.aud", d.aud.toLocaleString("en-US")], ["dr.profit", eur(d.profit)], [d.kind === "sale" ? "dr.ask" : "dr.mrent", eur(d.price)]] as [string, string][]).map(([k, v]) => (
                     <div key={k} className="p-3">
                       <p className="text-[10px] text-muted-foreground">{t(k)}</p>
                       <p className="font-mono tabular mt-1 text-sm">{v}</p>
