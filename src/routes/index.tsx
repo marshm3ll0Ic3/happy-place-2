@@ -34,7 +34,7 @@ const TICKER = [
 function Spark({ up = true, className = "h-8 w-full" }: { up?: boolean; className?: string }) {
   const pts = up ? "0,22 12,18 22,20 34,12 46,14 58,6 70,8 80,2" : "0,4 12,8 22,6 34,14 46,12 58,18 70,16 80,22";
   return (
-    <svg viewBox="0 0 80 24" preserveAspectRatio="none" className={`${className} ${up ? "text-primary-glow" : "text-no"}`}>
+    <svg viewBox="0 0 80 24" preserveAspectRatio="none" className={`${className} ${up ? "text-primary" : "text-no"}`}>
       <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
     </svg>
   );
@@ -42,9 +42,10 @@ function Spark({ up = true, className = "h-8 w-full" }: { up?: boolean; classNam
 
 function Eyebrow({ children, tone = "primary" }: { children: ReactNode; tone?: "primary" | "cream" }) {
   return (
-    <p className={`flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] ${tone === "cream" ? "text-cream-muted" : "text-primary-glow"}`}>
-      <span className={`size-1.5 rounded-full ${tone === "cream" ? "bg-cream-muted" : "bg-yes"}`} />
+    <p className={`font-mono flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] ${tone === "cream" ? "text-cream-muted" : "text-muted-foreground"}`}>
+      <span className={tone === "cream" ? "text-cream-foreground" : "text-primary"}>[</span>
       {children}
+      <span className={tone === "cream" ? "text-cream-foreground" : "text-primary"}>]</span>
     </p>
   );
 }
@@ -90,25 +91,25 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="mesh pointer-events-none absolute -inset-20 opacity-80" />
       <div className="grid-bg pointer-events-none absolute inset-0" />
-      <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-14 md:pt-24">
+      <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-16 md:pt-28">
         <div className="grid items-center gap-10 md:grid-cols-[1.3fr_1fr]">
           <div>
             <Eyebrow>{t("h.eyebrow")}</Eyebrow>
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-5 text-5xl font-bold leading-[0.92] md:text-7xl lg:text-[5.5rem]"
+              className="mt-5 text-5xl font-semibold leading-[0.95] md:text-7xl lg:text-[5.75rem]"
             >
               {t("hero.title")}
             </motion.h1>
             <p className="mt-6 max-w-md text-muted-foreground">{t("h.sub")}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button asChild size="lg" className="glow h-12 rounded-xl px-6 active:scale-95">
+              <Button asChild size="lg" className="h-12 rounded-sm px-6 active:scale-95">
                 <Link to="/markets">
                   <BarChart3 /> {t("h.cta1")} <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="ghost" className="h-12 rounded-xl px-4 text-muted-foreground">
+              <Button asChild size="lg" variant="ghost" className="h-12 rounded-sm px-4 text-muted-foreground">
                 <Link to="/community">
                   <Users /> {t("h.cta2")}
                 </Link>
@@ -120,25 +121,26 @@ function Hero() {
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="glass glow rounded-2xl p-6"
+            className="hairline relative rounded-md bg-card p-6"
           >
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.15em]">
+            <span className="font-mono absolute -top-2.5 left-4 bg-background px-1.5 text-[10px] text-muted-foreground">SIG/@MAYABLOOM</span>
+            <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.1em]">
               <span className="text-muted-foreground">{t("h.signal")}</span>
               <span className="flex items-center gap-1.5 text-yes">
                 <span className="size-1.5 animate-pulse rounded-full bg-yes" /> {t("h.live")}
               </span>
             </div>
-            <p className="font-display tabular mt-5 text-6xl font-bold">84.7</p>
+            <p className="font-mono tabular mt-5 text-7xl font-medium tracking-tight">84.7</p>
             <p className="mt-1 text-xs text-yes">+5.4% {t("h.week")}</p>
             <Spark className="mt-6 h-24 w-full" />
           </motion.div>
         </div>
 
-        <div className="glass mt-14 grid grid-cols-3 divide-x divide-border rounded-2xl">
+        <div className="hairline bg-card mt-14 grid grid-cols-3 divide-x divide-border rounded-md">
           {stats.map((s) => (
             <div key={s.k} className="p-4 md:p-6">
-              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground md:text-xs">{t(s.k)}</p>
-              <p className="font-display mt-2 text-lg font-bold md:text-3xl">
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground md:text-[11px]">{t(s.k)}</p>
+              <p className="font-mono tabular mt-2 text-lg font-medium md:text-3xl">
                 <CountUp value={s.v} />
               </p>
             </div>
@@ -153,13 +155,13 @@ function Ticker() {
   const { t } = useT();
   return (
     <div className="flex items-center overflow-hidden border-y border-border bg-background">
-      <span className="z-10 flex shrink-0 items-center gap-1.5 border-r border-border bg-background px-4 py-3 text-[11px] uppercase tracking-[0.15em] text-primary-glow">
-        <Zap className="size-3" /> {t("h.trending")}
+      <span className="z-10 flex shrink-0 items-center gap-1.5 border-r border-border bg-background px-4 py-3 font-mono text-[11px] uppercase tracking-[0.1em] text-primary">
+        <span className="size-1.5 animate-pulse bg-primary" /> {t("h.trending")}
       </span>
       <div className="overflow-hidden">
         <div className="marquee flex w-max gap-10 py-3 pl-6">
           {[...TICKER, ...TICKER].map(([h, d], i) => (
-            <span key={i} className="flex items-center gap-2 whitespace-nowrap text-sm">
+            <span key={i} className="font-mono flex items-center gap-2 whitespace-nowrap text-xs">
               <span className="font-medium">{h}</span>
               <span className={`tabular text-xs ${d >= 0 ? "text-yes" : "text-no"}`}>
                 {d >= 0 ? "▲" : "▼"} {Math.abs(d)}%
@@ -178,16 +180,16 @@ function HowItWorks() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
       <Eyebrow>{t("s1.eyebrow")}</Eyebrow>
-      <h2 className="mt-4 text-4xl font-bold md:text-6xl">{t("s1.title")}</h2>
+      <h2 className="mt-4 text-4xl font-semibold leading-[1] md:text-6xl">{t("s1.title")}</h2>
       <p className="mt-4 max-w-xl text-muted-foreground">{t("s1.sub")}</p>
-      <div className="mt-10 grid gap-3 md:grid-cols-3">
+      <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-3">
         {steps.map((k, i) => (
-          <Reveal key={k} i={i}>
-            <Link to="/markets" className="glass group flex h-full min-h-48 flex-col rounded-2xl p-6 transition-colors hover:bg-secondary">
-              <span className="tabular text-xs text-primary-glow">0{i + 1}</span>
+          <Reveal key={k} i={i} className="bg-background">
+            <Link to="/markets" className="group flex h-full min-h-56 flex-col bg-background p-6 transition-colors hover:bg-card">
+              <span className="font-mono tabular text-xs text-primary">0{i + 1}</span>
               <h3 className="mt-6 text-lg font-bold">{t(`s1.${k}.t`)}</h3>
               <p className="mt-2 flex-1 text-sm text-muted-foreground">{t(`s1.${k}.d`)}</p>
-              <ArrowRight className="mt-4 size-4 self-end text-primary-glow transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="mt-4 size-4 self-end text-primary-transition-transform group-hover:translate-x-1" />
             </Link>
           </Reveal>
         ))}
@@ -209,24 +211,24 @@ function TrustSection() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-[1.3fr_1fr] md:py-28">
         <div>
           <Eyebrow>{t("s2.eyebrow")}</Eyebrow>
-          <h2 className="mt-4 text-4xl font-bold md:text-6xl">{t("s2.title")}</h2>
+          <h2 className="mt-4 text-4xl font-semibold leading-[1] md:text-6xl">{t("s2.title")}</h2>
           <p className="mt-4 max-w-lg text-muted-foreground">{t("s2.sub")}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {bars.map((b) => (
-              <span key={b.k} className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs">
+              <span key={b.k} className="hairline bg-card flex items-center gap-1.5 rounded-sm px-2.5 py-1 font-mono text-xs">
                 <CheckCircle2 className="size-3.5 text-yes" /> {t(b.k)}
               </span>
             ))}
           </div>
-          <Button asChild className="glow mt-8 h-12 rounded-xl px-6 active:scale-95">
+          <Button asChild className="mt-8 h-12 rounded-sm px-6 active:scale-95">
             <Link to="/deal-room">
               {t("s2.cta")} <ArrowRight />
             </Link>
           </Button>
         </div>
-        <Reveal className="glass rounded-2xl p-6">
-          <p className="text-[11px] uppercase tracking-[0.15em] text-primary-glow">{t("s2.index")}</p>
-          <p className="font-display mt-4 text-6xl font-bold">
+        <Reveal className="hairline bg-card rounded-md p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-primary">{t("s2.index")}</p>
+          <p className="font-mono tabular mt-4 text-6xl font-medium">
             <CountUp value={92} />
             <span className="text-xl text-muted-foreground">/100</span>
           </p>
@@ -238,13 +240,13 @@ function TrustSection() {
                   <span>{t(b.k)}</span>
                   <span className="tabular text-muted-foreground">{b.v}</span>
                 </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary">
+                <div className="mt-1.5 h-1 overflow-hidden bg-secondary">
                   <motion.div
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: b.v / 100 }}
                     viewport={{ once: true }}
                     transition={{ duration: 1, ease: "easeOut" }}
-                    className="h-full origin-left rounded-full bg-gradient-to-r from-primary to-yes"
+                    className="h-full origin-left bg-primary"
                   />
                 </div>
               </div>
@@ -267,16 +269,16 @@ function AssetSection() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
       <Eyebrow>{t("s3.eyebrow")}</Eyebrow>
-      <h2 className="mt-4 max-w-xl text-4xl font-bold md:text-6xl">{t("s3.title")}</h2>
-      <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <h2 className="mt-4 max-w-xl text-4xl font-semibold leading-[1] md:text-6xl">{t("s3.title")}</h2>
+      <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
         {cards.map(({ k, icon: Icon, to }, i) => (
-          <Reveal key={k} i={i}>
-            <Link to={to} className="glass flex h-full flex-col rounded-2xl p-5 transition-colors hover:bg-secondary">
+          <Reveal key={k} i={i} className="bg-background">
+            <Link to={to} className="group flex h-full flex-col bg-background p-6 transition-colors hover:bg-card">
               <div className="flex items-start justify-between">
-                <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15">
-                  <Icon className="size-4 text-primary-glow" />
+                <span className="flex size-10 items-center justify-center rounded-sm border border-border">
+                  <Icon className="size-4 text-primary" />
                 </span>
-                <span className="tabular text-xs text-muted-foreground">0{i + 1}</span>
+                <span className="font-mono tabular text-xs text-muted-foreground">0{i + 1}</span>
               </div>
               <h3 className="mt-6 font-bold">{t(`s3.${k}.t`)}</h3>
               <p className="mt-2 flex-1 text-sm text-muted-foreground">{t(`s3.${k}.d`)}</p>
@@ -294,9 +296,9 @@ function SchoolSection() {
   const items = ["a", "b", "c"];
   return (
     <section className="mx-auto max-w-6xl px-5 py-10">
-      <div className="rounded-3xl bg-cream p-6 text-cream-foreground md:p-12">
-        <div className="flex size-20 flex-col items-center justify-center rounded-2xl bg-background text-foreground">
-          <GraduationCap className="size-5 text-primary-glow" />
+      <div className="rounded-md bg-cream p-6 text-cream-foreground md:p-12">
+        <div className="flex size-20 flex-col items-center justify-center rounded-md bg-background text-foreground">
+          <GraduationCap className="size-5 text-primary" />
           <span className="font-display mt-1 text-center text-[10px] font-bold leading-tight">DISTRUB<br />SCHOOL</span>
         </div>
         <div className="mt-6">
@@ -304,12 +306,12 @@ function SchoolSection() {
         </div>
         <h2 className="mt-4 max-w-2xl text-3xl font-bold md:text-5xl">{t("sc.title")}</h2>
         <p className="mt-4 max-w-xl text-cream-muted">{t("sc.sub")}</p>
-        <Button asChild className="mt-6 h-11 rounded-xl bg-background px-5 text-foreground hover:bg-background/90">
+        <Button asChild className="mt-6 h-11 rounded-sm bg-background px-5 text-foreground hover:bg-background/90">
           <Link to="/school">
             {t("sc.cta")} <ArrowRight />
           </Link>
         </Button>
-        <div className="mt-10 grid divide-y divide-cream-foreground/15 rounded-2xl border border-cream-foreground/15 md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div className="mt-10 grid divide-y divide-cream-foreground/15 rounded-md border border-cream-foreground/15 md:grid-cols-3 md:divide-x md:divide-y-0">
           {items.map((k, i) => (
             <Link key={k} to="/school" className="group flex min-h-40 flex-col p-6">
               <span className="tabular text-xs text-cream-muted">0{i + 1}</span>
@@ -368,16 +370,16 @@ function FoundingSection() {
 
   return (
     <section id="founding" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-20">
-      <div className="glass grid gap-10 rounded-3xl p-6 md:grid-cols-2 md:p-12">
+      <div className="hairline bg-card grid gap-10 rounded-md p-6 md:grid-cols-2 md:p-12">
         <div>
           <Eyebrow>{t("w.eyebrow")}</Eyebrow>
           <h2 className="mt-4 text-4xl font-bold md:text-5xl">{t("w.title")}</h2>
           <p className="mt-4 text-sm text-muted-foreground">{t("w.sub")}</p>
           <div className="mt-8 grid grid-cols-2 gap-3">
             {left.map(({ icon: Icon, v, k }) => (
-              <div key={k} className="rounded-2xl border border-border p-4">
-                <Icon className="size-4 text-primary-glow" />
-                <p className="font-display mt-3 text-3xl font-bold">
+              <div key={k} className="rounded-md border border-border p-4">
+                <Icon className="size-4 text-primary" />
+                <p className="font-mono tabular mt-3 text-3xl font-medium">
                   <CountUp value={v} />
                 </p>
                 <p className="text-xs text-muted-foreground">{t(k)}</p>
@@ -388,24 +390,24 @@ function FoundingSection() {
         <form onSubmit={submit} className="grid content-center gap-3 sm:grid-cols-2">
           <label className="space-y-1.5 text-xs text-muted-foreground">
             {t("w.email")}
-            <Input required type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="h-11 rounded-xl" />
+            <Input required type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="h-11 rounded-sm" />
           </label>
           <label className="space-y-1.5 text-xs text-muted-foreground">
             {t("w.phone")}
-            <Input type="tel" maxLength={30} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+33…" className="h-11 rounded-xl" />
+            <Input type="tel" maxLength={30} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+33…" className="h-11 rounded-sm" />
           </label>
           <label className="space-y-1.5 text-xs text-muted-foreground">
             {t("w.role")}
-            <select value={role} onChange={(e) => setRole(e.target.value)} className="h-11 w-full rounded-xl border border-input bg-transparent px-3 text-sm text-foreground">
+            <select value={role} onChange={(e) => setRole(e.target.value)} className="h-11 w-full rounded-sm border border-input bg-transparent px-3 text-sm text-foreground">
               <option value="creator" className="bg-popover">{t("w.roleCreator")}</option>
               <option value="buyer" className="bg-popover">{t("w.roleBuyer")}</option>
             </select>
           </label>
           <label className="space-y-1.5 text-xs text-muted-foreground">
             {t("w.size")}
-            <Input maxLength={40} value={size} onChange={(e) => setSize(e.target.value)} placeholder="e.g. 25k" className="h-11 rounded-xl" />
+            <Input maxLength={40} value={size} onChange={(e) => setSize(e.target.value)} placeholder="e.g. 25k" className="h-11 rounded-sm" />
           </label>
-          <Button disabled={busy} className="glow h-12 rounded-xl sm:col-span-2 active:scale-95">
+          <Button disabled={busy} className="h-12 rounded-sm sm:col-span-2 active:scale-95">
             {t("w.submit")} <ArrowRight />
           </Button>
         </form>
@@ -420,10 +422,10 @@ function FinalCta() {
     <section className="relative overflow-hidden px-5 py-24 text-center md:py-32">
       <div className="mesh pointer-events-none absolute inset-x-0 top-1/4 mx-auto h-2/3 max-w-3xl opacity-50" />
       <div className="relative">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-primary-glow">DiSTRUB</p>
-        <h2 className="mx-auto mt-4 max-w-2xl text-4xl font-bold md:text-6xl">{t("f.title")}</h2>
+        <p className="text-[11px] uppercase tracking-[0.2em] text-primary">DiSTRUB</p>
+        <h2 className="mx-auto mt-4 max-w-2xl text-4xl font-semibold leading-[1] md:text-6xl">{t("f.title")}</h2>
         <p className="mt-4 text-muted-foreground">{t("f.sub")}</p>
-        <Button asChild className="glow mt-8 h-12 rounded-xl px-6 active:scale-95">
+        <Button asChild className="mt-8 h-12 rounded-sm px-6 active:scale-95">
           <Link to="/deal-room">
             {t("s2.cta")} <ArrowRight />
           </Link>
