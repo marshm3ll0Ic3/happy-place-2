@@ -142,6 +142,45 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          market_category: string
+          market_question: string
+          market_slug: string
+          price_cents: number
+          shares: number
+          side: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          market_category: string
+          market_question: string
+          market_slug: string
+          price_cents: number
+          shares: number
+          side: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          market_category?: string
+          market_question?: string
+          market_slug?: string
+          price_cents?: number
+          shares?: number
+          side?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount_cents: number
