@@ -74,6 +74,33 @@ export type Database = {
         }
         Relationships: []
       }
+      founding_waitlist: {
+        Row: {
+          audience_size: string | null
+          created_at: string
+          email: string
+          id: string
+          phone: string | null
+          role: string
+        }
+        Insert: {
+          audience_size?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          phone?: string | null
+          role?: string
+        }
+        Update: {
+          audience_size?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          role?: string
+        }
+        Relationships: []
+      }
       ledger_entries: {
         Row: {
           amount: number
@@ -212,6 +239,7 @@ export type Database = {
       }
     }
     Functions: {
+      founding_counts: { Args: never; Returns: Json }
       post_transfer: {
         Args: {
           _amount: number
