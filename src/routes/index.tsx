@@ -143,7 +143,7 @@ function Landing() {
                 <TrendingUp className="size-4 text-yes" />
               </div>
               <p className="font-display mt-4 text-2xl font-bold">@nova.fit</p>
-              <p className="text-muted-foreground">{MARKETS[0].q}</p>
+              <p className="text-muted-foreground">{MARKETS[0]!.q}</p>
               <p className="font-display tabular mt-6 text-6xl font-bold text-yes">
                 <CountUp value={64} />%
               </p>
