@@ -1,7 +1,14 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion, animate, useInView } from "framer-motion";
-import { BarChart3, Gem, Megaphone, Wallet, User, Search } from "lucide-react";
+import { BarChart3, Gem, Megaphone, Wallet, User, Search, Globe, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useT, LANGS, type Lang } from "@/lib/i18n";
 
@@ -27,42 +34,45 @@ export function Logo() {
   );
 }
 
-export function LangSwitcher() {
+const LANG_NAMES: Record<Lang, string> = {
+  en: "English",
+  fr: "Français",
+  es: "Español",
+  ru: "Русский",
+};
+
+export function LangDropdown() {
   const { lang, setLang, t } = useT();
   return (
-    <select
-      aria-label={t("lang")}
-      value={lang}
-      onChange={(e) => setLang(e.target.value as Lang)}
-      className="glass h-11 rounded-sm bg-transparent px-3 text-sm uppercase text-foreground"
-    >
-      {Object.keys(LANGS).map((l) => (
-        <option key={l} value={l} className="bg-popover">
-          {l}
-        </option>
-      ))}
-    </select>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={t("lang")}
+        className="glass flex h-9 items-center gap-2 rounded-sm px-3 font-mono text-[11px] uppercase text-foreground outline-none transition-colors hover:text-foreground data-[state=open]:border-primary/50"
+      >
+        <Globe className="size-3.5 text-muted-foreground" />
+        <span>{lang}</span>
+        <ChevronDown className="size-3 text-muted-foreground" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
+        <DropdownMenuRadioGroup value={lang} onValueChange={(v) => setLang(v as Lang)}>
+          {(Object.keys(LANGS) as Lang[]).map((l) => (
+            <DropdownMenuRadioItem
+              key={l}
+              value={l}
+              className="flex h-9 gap-3 rounded-sm font-mono text-[11px] uppercase"
+            >
+              <span className="w-5 shrink-0">{l}</span>
+              <span className="font-sans text-xs normal-case text-muted-foreground">{LANG_NAMES[l]}</span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
-function LangChips() {
-  const { lang, setLang } = useT();
-  return (
-    <div className="glass flex rounded-sm p-0.5">
-      {(Object.keys(LANGS) as Lang[]).map((l) => (
-        <button
-          key={l}
-          onClick={() => setLang(l)}
-          className={`h-8 rounded-sm px-2.5 text-[11px] uppercase transition-colors ${
-            lang === l ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {l}
-        </button>
-      ))}
-    </div>
-  );
-}
+export const LangSwitcher = LangDropdown;
+
 
 const DESKTOP_NAV = [
   { to: "/markets", key: "nav.markets" },
