@@ -29,5 +29,21 @@
   "wallet.restricted": "Ограниченные",
   "wallet.convertible": "Конвертируемые",
   "wallet.buy": "Купить кредиты",
-  "lang": "Язык"
+  "lang": "Язык",
+  "auth.signIn": "Войти",
+  "auth.signUp": "Создать аккаунт",
+  "auth.google": "Продолжить с Google",
+  "auth.or": "или",
+  "auth.email": "Почта",
+  "auth.password": "Пароль",
+  "auth.toSignUp": "Впервые? Создайте аккаунт",
+  "auth.toSignIn": "Есть аккаунт? Войти",
+  "auth.checkEmail": "Проверьте почту для подтверждения аккаунта.",
+  "auth.signOut": "Выйти",
+  "wallet.conversionLocked": "Вывод в деньги заблокирован до подключения лицензированного оператора.",
+  "wallet.joinWaitlist": "В лист ожидания",
+  "wallet.waitlisted": "В листе ожидания",
+  "wallet.waitlistJoined": "Вы в листе ожидания.",
+  "wallet.history": "История",
+  "wallet.noHistory": "Транзакций пока нет."
 }
