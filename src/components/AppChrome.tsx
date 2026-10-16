@@ -16,7 +16,7 @@ export const TABS = [
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      <span className="glow flex size-9 items-center justify-center rounded-xl bg-primary font-display text-base font-bold text-primary-foreground">
+      <span className="flex size-9 items-center justify-center rounded-sm bg-primary font-display text-base font-bold text-primary-foreground">
         D
       </span>
       <span className="leading-none">
@@ -34,7 +34,7 @@ export function LangSwitcher() {
       aria-label={t("lang")}
       value={lang}
       onChange={(e) => setLang(e.target.value as Lang)}
-      className="glass h-11 rounded-full bg-transparent px-3 text-sm uppercase text-foreground"
+      className="glass h-11 rounded-sm bg-transparent px-3 text-sm uppercase text-foreground"
     >
       {Object.keys(LANGS).map((l) => (
         <option key={l} value={l} className="bg-popover">
@@ -48,12 +48,12 @@ export function LangSwitcher() {
 function LangChips() {
   const { lang, setLang } = useT();
   return (
-    <div className="glass flex rounded-full p-0.5">
+    <div className="glass flex rounded-sm p-0.5">
       {(Object.keys(LANGS) as Lang[]).map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
-          className={`h-8 rounded-full px-2.5 text-[11px] uppercase transition-colors ${
+          className={`h-8 rounded-sm px-2.5 text-[11px] uppercase transition-colors ${
             lang === l ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
           }`}
         >
@@ -83,7 +83,7 @@ export function TopNav() {
             <Link
               key={tab.to}
               to={tab.to}
-              className="rounded-full px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-sm px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "bg-secondary !text-foreground" }}
             >
               {t(tab.key)}
@@ -91,7 +91,7 @@ export function TopNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/markets" aria-label={t("nav.search")} className="glass flex size-9 items-center justify-center rounded-full">
+          <Link to="/markets" aria-label={t("nav.search")} className="glass flex size-9 items-center justify-center rounded-sm">
             <Search className="size-4 text-muted-foreground" />
           </Link>
           <LangChips />
@@ -119,7 +119,7 @@ export function BottomTabs() {
               {active && (
                 <motion.span
                   layoutId="tab-glow"
-                  className="glow absolute top-0 h-0.5 w-8 rounded-full bg-primary"
+                  className="absolute top-0 h-0.5 w-8 rounded-sm bg-primary"
                 />
               )}
               <Icon className={active ? "size-5 text-primary" : "size-5 text-muted-foreground"} />
@@ -159,16 +159,16 @@ function AccountButton() {
   if (signedIn === null) return <div className="h-9 w-40" />;
   if (signedIn)
     return (
-      <Link to="/wallet" className="glow flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground">
+      <Link to="/wallet" className="flex h-9 items-center rounded-sm bg-primary px-4 text-sm font-medium text-primary-foreground">
         {t("nav.wallet")}
       </Link>
     );
   return (
     <>
-      <Link to="/auth" className="flex h-9 items-center rounded-full px-3 text-sm text-foreground">
+      <Link to="/auth" className="flex h-9 items-center rounded-sm px-3 text-sm text-foreground">
         {t("nav.signIn")}
       </Link>
-      <a href="/#founding" className="glow flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground">
+      <a href="/#founding" className="flex h-9 items-center rounded-sm bg-primary px-4 text-sm font-medium text-primary-foreground">
         {t("nav.earlyAccess")}
       </a>
     </>
