@@ -119,7 +119,7 @@ function Portfolio() {
             <Button asChild size="sm" className="rounded-sm"><Link to="/auth">{t("pf.signIn")}</Link></Button>
           </div>
         )}
-        <div className={`${live ? "mt-12" : "mt-4"} grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className={`${live ? "mt-12" : "mt-4"} grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]`}>
           <div className="bg-card p-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t("pf.value")}</p>
             <p className="font-mono tabular mt-4 text-5xl font-medium">
