@@ -301,5 +301,11 @@
   "mk.st_filled": "Exécuté",
   "mk.note": "Prix d'exemple",
   "mk.noteSub": "Les marchés, prix et volumes affichés sont des exemples pour montrer l'écran. Les vrais marchés ouvrent avec l'accès anticipé.",
-  "mk.toPortfolio": "Voir le portefeuille"
+  "mk.toPortfolio": "Voir le portefeuille",
+  "pf.sample": "Portefeuille d'exemple — connectez-vous pour voir vos contrats.",
+  "pf.signIn": "Se connecter",
+  "pf.empty": "Aucun contrat pour l'instant.",
+  "pf.rankSoon": "Classement à l'ouverture du trading",
+  "pf.balance": "Solde + positions ouvertes",
+  "pf.cancelled": "Annulé"
 }

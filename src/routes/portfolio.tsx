@@ -6,6 +6,9 @@ import { ArrowRight, BarChart3, ChevronDown, History, Share2, Target, Trophy } f
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/AppChrome";
 import { useT } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { currentPrice } from "@/lib/market-prices";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -41,15 +44,56 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
+type DbOrder = { id: string; market_slug: string; market_question: string; market_category: string; side: string; price_cents: number; shares: number; status: string };
+
 function Portfolio() {
   const { t } = useT();
   const [tab, setTab] = useState<"open" | "closed">("open");
-  const rows = tab === "open" ? OPEN : CLOSED;
+
+  const { data: me } = useQuery({
+    queryKey: ["mk-me"],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return null;
+      const { data: b } = await supabase.from("my_balances").select("*");
+      const bal = { promotional: 0, restricted: 0, convertible: 0 };
+      b?.forEach((r) => r.bucket && (bal[r.bucket as keyof typeof bal] = r.balance ?? 0));
+      return { userId: u.user.id, total: bal.promotional + bal.restricted + bal.convertible };
+    },
+  });
+  const { data: orders = [] } = useQuery({
+    queryKey: ["mk-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+      if (error) return [] as DbOrder[];
+      return (data ?? []) as DbOrder[];
+    },
+    enabled: !!me,
+  });
+
+  const live = !!me;
+  const toC = (o: DbOrder): C => {
+    const cur = o.status === "cancelled" ? o.price_cents : currentPrice(o.market_slug, o.side, o.price_cents);
+    return {
+      tag: o.status === "cancelled" ? `${o.market_category} · ${t("pf.cancelled")}` : o.market_category,
+      q: o.market_question, side: o.side === "no" ? "NO" : "YES",
+      a: o.price_cents, b: cur, shares: o.shares,
+      pnl: Math.round((o.shares * (cur - o.price_cents)) / 100),
+    };
+  };
+  const openList = live ? orders.filter((o) => o.status === "open").map(toC) : OPEN;
+  const closedList = live ? orders.filter((o) => o.status !== "open").map(toC) : CLOSED;
+  const rows = tab === "open" ? openList : closedList;
+
+  const exposure = live ? Math.round(orders.filter((o) => o.status === "open").reduce((s, o) => s + (o.shares * o.price_cents) / 100, 0)) : 3670;
+  const pnl = live ? [...openList, ...closedList].reduce((s, c) => s + c.pnl, 0) : 1914;
+  const value = live ? me!.total + pnl : 12740;
+  const fmt = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toLocaleString()} DSC`;
 
   const stats = [
-    { icon: BarChart3, k: "pf.pnl", v: <span className="text-yes">+1,914 DSC</span>, s: t("pf.pnlSub") },
-    { icon: Target, k: "pf.exposure", v: "3,670 DSC", s: t("pf.exposureSub") },
-    { icon: Trophy, k: "pf.rank", v: "#27", s: `3,142 ${t("pf.participants")}` },
+    { icon: BarChart3, k: "pf.pnl", v: <span className={pnl >= 0 ? "text-yes" : "text-no"}>{fmt(pnl)}</span>, s: t("pf.pnlSub") },
+    { icon: Target, k: "pf.exposure", v: `${exposure.toLocaleString()} DSC`, s: t("pf.exposureSub") },
+    { icon: Trophy, k: "pf.rank", v: live ? "—" : "#27", s: live ? t("pf.rankSoon") : `3,142 ${t("pf.participants")}` },
   ];
 
   return (
@@ -69,17 +113,23 @@ function Portfolio() {
           </Button>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        {!live && (
+          <div className="mt-10 flex items-center justify-between gap-4 rounded-md border border-border bg-card px-5 py-3 text-sm">
+            <span className="text-muted-foreground">{t("pf.sample")}</span>
+            <Button asChild size="sm" className="rounded-sm"><Link to="/auth">{t("pf.signIn")}</Link></Button>
+          </div>
+        )}
+        <div className={`${live ? "mt-12" : "mt-4"} grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]`}>
           <div className="bg-card p-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t("pf.value")}</p>
             <p className="font-mono tabular mt-4 text-5xl font-medium">
-              <CountUp value={12740} /> <span className="text-sm text-muted-foreground">DSC</span>
+              <CountUp value={value} /> <span className="text-sm text-muted-foreground">DSC</span>
             </p>
             <div className="mt-4 flex items-end justify-between gap-4">
               <svg viewBox="0 0 80 24" preserveAspectRatio="none" className="h-10 flex-1 text-primary-glow">
                 <polyline points="0,20 10,18 20,19 30,14 40,15 50,9 60,10 70,6 80,3" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
               </svg>
-              <span className="font-mono shrink-0 text-xs text-yes">+8.4% {t("pf.season")}</span>
+              {live ? <span className="font-mono shrink-0 text-xs text-muted-foreground">{t("pf.balance")}</span> : <span className="font-mono shrink-0 text-xs text-yes">+8.4% {t("pf.season")}</span>}
             </div>
           </div>
           {stats.map(({ icon: Icon, k, v, s }) => (
@@ -105,7 +155,7 @@ function Portfolio() {
                   onClick={() => setTab(k)}
                   className={`font-mono flex items-center gap-2 rounded-sm px-3 py-1.5 text-xs uppercase transition-colors ${tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
-                  {t(`pf.${k}`)} <span className="opacity-70">{k === "open" ? OPEN.length : CLOSED.length}</span>
+                  {t(`pf.${k}`)} <span className="opacity-70">{k === "open" ? openList.length : closedList.length}</span>
                 </button>
               ))}
             </div>
@@ -114,9 +164,15 @@ function Portfolio() {
             <ChevronDown className="size-3" /> {rows.length} {t("pf.count")}
           </p>
           <div className="max-h-[420px] divide-y divide-border overflow-y-auto">
+            {rows.length === 0 && (
+              <div className="flex flex-col items-center gap-3 px-6 py-12 text-sm text-muted-foreground">
+                {t("pf.empty")}
+                <Button asChild variant="outline" size="sm" className="rounded-sm"><Link to="/markets">{t("pf.find")} <ArrowRight /></Link></Button>
+              </div>
+            )}
             {rows.map((r, i) => (
               <motion.div
-                key={tab + r.q}
+                key={tab + r.q + i}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
