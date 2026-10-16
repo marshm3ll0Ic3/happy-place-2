@@ -454,7 +454,7 @@ function Markets() {
                 disabled={busy}
                 className="mt-5 h-11 w-full rounded-sm"
               >
-                {me ? `${t("mk.place")} ${side}` : t("mk.signInTrade")} <ArrowRight />
+                {me ? `${t("mk.place")} ${side.toUpperCase()}` : t("mk.signInTrade")} <ArrowRight />
               </Button>
               <p className="mt-3 text-center text-[11px] text-muted-foreground">{t("mk.ticketNote")}</p>
             </div>
