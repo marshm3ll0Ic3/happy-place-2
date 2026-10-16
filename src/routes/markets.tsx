@@ -51,6 +51,10 @@ const MARKETS: M[] = [
   { slug: "ai-host-first-podcast-chart", cat: "AI Agents", q: "Will an AI-hosted podcast hit a national chart?", yes: 22, vol: 340000, parts: 860, closes: 45, tag: "new" },
 ];
 
+const PATHS: Record<string, number[]> = Object.fromEntries(
+  MARKETS.map((m) => [m.slug, path(m.slug, m.yes)]),
+);
+
 function hash(s: string) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
@@ -92,7 +96,7 @@ function Chart({ data }: { data: number[] }) {
       ))}
       <polygon points={`0,${H} ${pts} ${W},${H}`} className="fill-primary/10" />
       <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-primary" vectorEffect="non-scaling-stroke" />
-      <circle cx={x(last)} cy={y(data[last])} r="2.5" className="fill-primary" />
+      <circle cx={x(last)} cy={y(data[last]!)} r="2.5" className="fill-primary" />
     </svg>
   );
 }
@@ -129,7 +133,7 @@ function Markets() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | Tag>("all");
   const [sort, setSort] = useState<"vol" | "move" | "time">("vol");
-  const [slug, setSlug] = useState(MARKETS[0].slug);
+  const [slug, setSlug] = useState(MARKETS[0]!.slug);
   const [side, setSide] = useState<"yes" | "no">("yes");
   const [amount, setAmount] = useState("500");
   const [busy, setBusy] = useState(false);
@@ -156,7 +160,6 @@ function Markets() {
     enabled: !!me,
   });
 
-  const paths = Object.fromEntries(MARKETS.map((m) => [m.slug, path(m.slug, m.yes)]));
 
   const rows = MARKETS.filter((m) => {
     const okFilter = filter === "all" || m.tag === filter;
@@ -166,14 +169,14 @@ function Markets() {
   }).sort((a, b) => {
     if (sort === "vol") return b.vol - a.vol;
     if (sort === "time") return a.closes - b.closes;
-    const ma = Math.abs(paths[a.slug][29] - paths[a.slug][0]);
-    const mb = Math.abs(paths[b.slug][29] - paths[b.slug][0]);
+    const ma = Math.abs(PATHS[a.slug]![29]! - PATHS[a.slug]![0]!);
+    const mb = Math.abs(PATHS[b.slug]![29]! - PATHS[b.slug]![0]!);
     return mb - ma;
   });
 
-  const m = MARKETS.find((x) => x.slug === slug) ?? MARKETS[0];
-  const series = paths[m.slug];
-  const change = series[29] - series[0];
+  const m = MARKETS.find((x) => x.slug === slug) ?? MARKETS[0]!;
+  const series = PATHS[m.slug]!;
+  const change = series[series.length - 1]! - series[0]!;
   const price = side === "yes" ? m.yes : 100 - m.yes;
   const amt = Math.max(0, Math.round(Number(amount) || 0));
   const shares = Math.floor((amt * 100) / price);
@@ -329,7 +332,7 @@ function Markets() {
               )}
               {rows.map((r, i) => {
                 const active = r.slug === slug;
-                const s = paths[r.slug];
+                const s = PATHS[r.slug]!;
                 return (
                   <motion.button
                     key={r.slug}
