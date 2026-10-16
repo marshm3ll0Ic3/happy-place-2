@@ -45,5 +45,7 @@
   "wallet.waitlisted": "On the waitlist",
   "wallet.waitlistJoined": "You're on the waitlist.",
   "wallet.history": "History",
-  "wallet.noHistory": "No transactions yet."
+  "wallet.noHistory": "No transactions yet.",
+  "legal.purchasedUse": "Purchased DSC can only be used for Reach bookings and auction fees. It cannot be staked on markets or withdrawn, and is refundable only to the original card.",
+  "wallet.demoMode": "Demo mode: no card is charged."
 }

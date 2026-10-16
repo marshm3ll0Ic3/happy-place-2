@@ -7,6 +7,7 @@ import { CountUp } from "@/components/AppChrome";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
+import { BuyCreditsSheet } from "@/components/BuyCreditsSheet";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
   head: () => ({
@@ -120,9 +121,7 @@ function Wallet() {
       </ul>
 
       <div className="fixed inset-x-0 bottom-16 px-5 pb-2 md:static md:mt-6 md:px-0">
-        <Button size="lg" className="glow h-14 w-full rounded-2xl text-base active:scale-95">
-          {t("wallet.buy")}
-        </Button>
+        <BuyCreditsSheet />
       </div>
     </ShellPage>
   );
