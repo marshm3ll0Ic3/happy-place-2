@@ -301,5 +301,11 @@
   "mk.st_filled": "Filled",
   "mk.note": "Sample prices",
   "mk.noteSub": "The markets, prices and volume here are sample figures so you can see how the screen works. Live markets open with early access.",
-  "mk.toPortfolio": "View portfolio"
+  "mk.toPortfolio": "View portfolio",
+  "pf.sample": "Sample portfolio — sign in to see your own contracts.",
+  "pf.signIn": "Sign in",
+  "pf.empty": "No contracts here yet.",
+  "pf.rankSoon": "Ranks open with trading",
+  "pf.balance": "Balance + open positions",
+  "pf.cancelled": "Cancelled"
 }

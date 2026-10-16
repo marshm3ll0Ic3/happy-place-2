@@ -301,5 +301,11 @@
   "mk.st_filled": "Ejecutada",
   "mk.note": "Precios de muestra",
   "mk.noteSub": "Los mercados, precios y volúmenes son cifras de muestra para ver la pantalla. Los mercados reales abren con el acceso anticipado.",
-  "mk.toPortfolio": "Ver cartera"
+  "mk.toPortfolio": "Ver cartera",
+  "pf.sample": "Cartera de ejemplo — inicia sesión para ver tus contratos.",
+  "pf.signIn": "Iniciar sesión",
+  "pf.empty": "Aún no hay contratos.",
+  "pf.rankSoon": "Ranking al abrir el trading",
+  "pf.balance": "Saldo + posiciones abiertas",
+  "pf.cancelled": "Cancelado"
 }
