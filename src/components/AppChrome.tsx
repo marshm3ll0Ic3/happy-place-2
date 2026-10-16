@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion, animate, useInView } from "framer-motion";
-import { BarChart3, Gem, Megaphone, Wallet, User } from "lucide-react";
+import { BarChart3, Gem, Megaphone, Wallet, User, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useT, LANGS, type Lang } from "@/lib/i18n";
@@ -156,13 +156,21 @@ function AccountButton() {
     const { data } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
     return () => data.subscription.unsubscribe();
   }, []);
-  if (signedIn === null) return <div className="h-11 w-24" />;
+  if (signedIn === null) return <div className="h-9 w-40" />;
+  if (signedIn)
+    return (
+      <Link to="/wallet" className="glow flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground">
+        {t("nav.wallet")}
+      </Link>
+    );
   return (
-    <Link
-      to={signedIn ? "/wallet" : "/auth"}
-      className="glow flex h-11 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground"
-    >
-      {t(signedIn ? "nav.wallet" : "nav.signIn")}
-    </Link>
+    <>
+      <Link to="/auth" className="flex h-9 items-center rounded-full px-3 text-sm text-foreground">
+        {t("nav.signIn")}
+      </Link>
+      <a href="/#founding" className="glow flex h-9 items-center rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground">
+        {t("nav.earlyAccess")}
+      </a>
+    </>
   );
 }
