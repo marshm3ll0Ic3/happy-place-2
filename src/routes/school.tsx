@@ -73,16 +73,15 @@ function School() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
-                <span className="mb-4" />
-              </div>
-              <div className="flex items-center justify-between border-t border-border pt-4">
-                <span className="font-mono flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="size-3.5" /> {t(`sch.${id}.m`)}
-                </span>
-                <button onClick={soon} className="flex items-center gap-1 text-xs font-medium text-primary hover:underline">
-                  {t("sch.view")} <ArrowRight className="size-3.5" />
-                </button>
+              <div className="mt-auto pt-8">
+                <div className="flex items-center justify-between border-t border-border pt-4">
+                  <span className="font-mono flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Clock className="size-3.5" /> {t(`sch.${id}.m`)}
+                  </span>
+                  <button onClick={soon} className="flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                    {t("sch.view")} <ArrowRight className="size-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
