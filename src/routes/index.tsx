@@ -1,17 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BarChart3, Gem, Megaphone, Gavel, ArrowRight, TrendingUp } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+  ArrowRight, BarChart3, Radio, Gavel, Sparkles, GraduationCap, CheckCircle2, Users, ShoppingBag, Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CountUp } from "@/components/AppChrome";
+import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "DiSTRUB — The attention exchange" },
-      { name: "description", content: "Value your audience, book real creator reach, and trade on creator markets." },
+      { name: "description", content: "Measure attention across search, social and streaming, back creators, rent distribution and acquire audited communities." },
       { property: "og:title", content: "DiSTRUB — The attention exchange" },
-      { property: "og:description", content: "Value your audience, book real creator reach, and trade on creator markets." },
+      { property: "og:description", content: "Measure attention, back creators, rent distribution and acquire audited communities." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -20,224 +27,436 @@ export const Route = createFileRoute("/")({
 });
 
 const TICKER = [
-  ["@nova.fit hits 1M by Dec", 64],
-  ["@kai.cooks viral this week", 41],
-  ["@luma.art brand deal Q4", 72],
-  ["@rex.plays 50k live viewers", 28],
-  ["@sora.travel 10M views", 55],
-  ["@mila.beauty launches line", 83],
+  ["@MayaBloom", 12.4], ["@NoahTrance", 8.1], ["@LunaLoops", -3.2], ["@AlexBuilds", 5.7],
+  ["@StudioNox", 2.9], ["@KaiCooks", -1.4], ["@RexPlays", 9.6], ["@SoraTravel", 4.3],
 ] as const;
 
-const MARKETS = [
-  { handle: "@nova.fit", q: "Hits 1M followers by December?", yes: 64, vol: 48200 },
-  { handle: "@luma.art", q: "Signs a brand deal in Q4?", yes: 72, vol: 31750 },
-  { handle: "@rex.plays", q: "Peaks above 50k live viewers?", yes: 28, vol: 19400 },
-];
-
-function Spark({ up, className = "h-5 w-14" }: { up: boolean; className?: string }) {
-  const pts = up ? "0,18 10,14 20,15 30,9 40,10 50,4 60,2" : "0,4 10,6 20,5 30,11 40,10 50,15 60,17";
+function Spark({ up = true, className = "h-8 w-full" }: { up?: boolean; className?: string }) {
+  const pts = up ? "0,22 12,18 22,20 34,12 46,14 58,6 70,8 80,2" : "0,4 12,8 22,6 34,14 46,12 58,18 70,16 80,22";
   return (
-    <svg viewBox="0 0 60 20" preserveAspectRatio="none" className={`${className} ${up ? "text-yes" : "text-no"}`}>
+    <svg viewBox="0 0 80 24" preserveAspectRatio="none" className={`${className} ${up ? "text-primary-glow" : "text-no"}`}>
       <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
 
-function MarketCard({ m, i }: { m: (typeof MARKETS)[number]; i: number }) {
-  const { t } = useT();
+function Eyebrow({ children, tone = "primary" }: { children: ReactNode; tone?: "primary" | "cream" }) {
+  return (
+    <p className={`flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] ${tone === "cream" ? "text-cream-muted" : "text-primary-glow"}`}>
+      <span className={`size-1.5 rounded-full ${tone === "cream" ? "bg-cream-muted" : "bg-yes"}`} />
+      {children}
+    </p>
+  );
+}
+
+function Reveal({ children, i = 0, className }: { children: ReactNode; i?: number; className?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: i * 0.08 }}
-      className="glass rounded-3xl p-5"
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ delay: i * 0.08, duration: 0.45 }}
+      className={className}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-primary">{m.handle}</span>
-        <span className="tabular text-xs text-muted-foreground">{m.vol.toLocaleString()} DSC</span>
-      </div>
-      <p className="font-display mt-3 text-lg font-bold leading-tight">{m.q}</p>
-      <Spark up={m.yes >= 50} className="mt-4 h-10 w-full" />
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="rounded-xl bg-yes/15 py-2.5 text-center text-sm font-semibold text-yes">
-          {t("landing.yes")} {m.yes}%
-        </div>
-        <div className="rounded-xl bg-no/15 py-2.5 text-center text-sm font-semibold text-no">
-          {t("landing.no")} {100 - m.yes}%
-        </div>
-      </div>
+      {children}
     </motion.div>
   );
 }
 
 function Landing() {
-  const { t } = useT();
-  const feats = [
-    { icon: BarChart3, k: "markets" },
-    { icon: Gem, k: "value" },
-    { icon: Megaphone, k: "reach" },
-    { icon: Gavel, k: "mgmt" },
-  ];
-  const stats = [
-    { v: 12480, k: "landing.stat.creators" },
-    { v: 2140000, k: "landing.stat.volume" },
-    { v: 860, k: "landing.stat.markets" },
-  ];
   return (
     <div className="pb-24 md:pb-0">
-      <section className="relative overflow-hidden">
-        <div className="mesh pointer-events-none absolute -inset-20" />
-        <div className="grid-bg pointer-events-none absolute inset-0" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-14 md:grid-cols-[1.2fr_1fr] md:pb-24 md:pt-24">
-          <div className="text-center md:text-left">
-            <motion.p
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-muted-foreground"
-            >
-              <span className="size-1.5 animate-pulse rounded-full bg-yes" /> {t("hero.badge")}
-            </motion.p>
+      <Hero />
+      <Ticker />
+      <HowItWorks />
+      <TrustSection />
+      <AssetSection />
+      <SchoolSection />
+      <FoundingSection />
+      <FinalCta />
+      <Footer />
+    </div>
+  );
+}
+
+function Hero() {
+  const { t } = useT();
+  const stats = [
+    { k: "h.statCreators", v: 28416 },
+    { k: "h.statVolume", v: 42400000 },
+    { k: "h.statReach", v: 64000000 },
+  ];
+  return (
+    <section className="relative overflow-hidden">
+      <div className="mesh pointer-events-none absolute -inset-20 opacity-80" />
+      <div className="grid-bg pointer-events-none absolute inset-0" />
+      <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-14 md:pt-24">
+        <div className="grid items-center gap-10 md:grid-cols-[1.3fr_1fr]">
+          <div>
+            <Eyebrow>{t("h.eyebrow")}</Eyebrow>
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mt-6 text-5xl font-bold leading-[0.95] md:text-7xl lg:text-8xl"
+              className="mt-5 text-5xl font-bold leading-[0.92] md:text-7xl lg:text-[5.5rem]"
             >
               {t("hero.title")}
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.25 }}
-              className="mx-auto mt-6 max-w-lg text-lg text-muted-foreground md:mx-0"
-            >
-              {t("hero.subtitle")}
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35 }}
-              className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center md:justify-start"
-            >
-              <Button asChild size="lg" className="glow h-14 rounded-2xl px-8 text-base active:scale-95">
-                <Link to="/value">
-                  {t("hero.ctaValue")} <ArrowRight />
+            <p className="mt-6 max-w-md text-muted-foreground">{t("h.sub")}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button asChild size="lg" className="glow h-12 rounded-xl px-6 active:scale-95">
+                <Link to="/markets">
+                  <BarChart3 /> {t("h.cta1")} <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="secondary" className="h-14 rounded-2xl px-8 text-base active:scale-95">
-                <Link to="/markets">{t("hero.ctaExplore")}</Link>
+              <Button asChild size="lg" variant="ghost" className="h-12 rounded-xl px-4 text-muted-foreground">
+                <Link to="/community">
+                  <Users /> {t("h.cta2")}
+                </Link>
               </Button>
-            </motion.div>
+            </div>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="relative hidden md:block"
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="glass glow rounded-2xl p-6"
           >
-            <div className="glass glow rounded-3xl p-6">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{t("landing.trending")}</span>
-                <TrendingUp className="size-4 text-yes" />
-              </div>
-              <p className="font-display mt-4 text-2xl font-bold">@nova.fit</p>
-              <p className="text-muted-foreground">{MARKETS[0]!.q}</p>
-              <p className="font-display tabular mt-6 text-6xl font-bold text-yes">
-                <CountUp value={64} />%
-              </p>
-              <Spark up className="mt-4 h-16 w-full" />
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-yes/15 py-3 text-center font-semibold text-yes">{t("landing.yes")}</div>
-                <div className="rounded-2xl bg-no/15 py-3 text-center font-semibold text-no">{t("landing.no")}</div>
-              </div>
+            <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.15em]">
+              <span className="text-muted-foreground">{t("h.signal")}</span>
+              <span className="flex items-center gap-1.5 text-yes">
+                <span className="size-1.5 animate-pulse rounded-full bg-yes" /> {t("h.live")}
+              </span>
             </div>
+            <p className="font-display tabular mt-5 text-6xl font-bold">84.7</p>
+            <p className="mt-1 text-xs text-yes">+5.4% {t("h.week")}</p>
+            <Spark className="mt-6 h-24 w-full" />
           </motion.div>
         </div>
-      </section>
 
-      <div className="overflow-hidden border-y border-border py-3">
-        <div className="marquee flex w-max gap-8">
-          {[...TICKER, ...TICKER].map(([m, p], i) => (
-            <div key={i} className="flex items-center gap-3 whitespace-nowrap text-sm">
-              <span className="text-muted-foreground">{m}</span>
-              <span className={`tabular font-display font-bold ${p >= 50 ? "text-yes" : "text-no"}`}>{p}%</span>
-              <Spark up={p >= 50} />
+        <div className="glass mt-14 grid grid-cols-3 divide-x divide-border rounded-2xl">
+          {stats.map((s) => (
+            <div key={s.k} className="p-4 md:p-6">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground md:text-xs">{t(s.k)}</p>
+              <p className="font-display mt-2 text-lg font-bold md:text-3xl">
+                <CountUp value={s.v} />
+              </p>
             </div>
           ))}
         </div>
       </div>
+    </section>
+  );
+}
 
-      <section className="mx-auto grid max-w-6xl grid-cols-3 gap-3 px-5 py-14">
-        {stats.map((s) => (
-          <div key={s.k} className="text-center md:text-left">
-            <p className="font-display text-2xl font-bold md:text-5xl">
-              <CountUp value={s.v} />
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground md:text-sm">{t(s.k)}</p>
-          </div>
-        ))}
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 pb-16">
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-bold md:text-5xl">{t("landing.liveTitle")}</h2>
-          <Link to="/markets" className="flex min-h-11 shrink-0 items-center gap-1 text-sm text-primary">
-            {t("landing.seeAll")} <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {MARKETS.map((m, i) => (
-            <MarketCard key={m.handle} m={m} i={i} />
+function Ticker() {
+  const { t } = useT();
+  return (
+    <div className="flex items-center overflow-hidden border-y border-border bg-background">
+      <span className="z-10 flex shrink-0 items-center gap-1.5 border-r border-border bg-background px-4 py-3 text-[11px] uppercase tracking-[0.15em] text-primary-glow">
+        <Zap className="size-3" /> {t("h.trending")}
+      </span>
+      <div className="overflow-hidden">
+        <div className="marquee flex w-max gap-10 py-3 pl-6">
+          {[...TICKER, ...TICKER].map(([h, d], i) => (
+            <span key={i} className="flex items-center gap-2 whitespace-nowrap text-sm">
+              <span className="font-medium">{h}</span>
+              <span className={`tabular text-xs ${d >= 0 ? "text-yes" : "text-no"}`}>
+                {d >= 0 ? "▲" : "▼"} {Math.abs(d)}%
+              </span>
+            </span>
           ))}
         </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 py-16">
-        <h2 className="max-w-lg text-3xl font-bold md:text-5xl">{t("feat.title")}</h2>
-        <div className="mt-10 grid gap-3 md:grid-cols-2">
-          {feats.map(({ icon: Icon, k }, i) => (
-            <motion.div
-              key={k}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="glass rounded-3xl p-6"
-            >
-              <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/15">
-                <Icon className="size-5 text-primary" />
-              </div>
-              <h3 className="mt-4 text-xl font-bold">{t(`feat.${k}.t`)}</h3>
-              <p className="mt-2 text-muted-foreground">{t(`feat.${k}.d`)}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="relative overflow-hidden rounded-3xl border border-border p-10 text-center md:p-16">
-          <div className="mesh pointer-events-none absolute -inset-10 opacity-70" />
-          <div className="relative">
-            <h2 className="text-3xl font-bold md:text-5xl">{t("landing.ctaTitle")}</h2>
-            <p className="mx-auto mt-4 max-w-md text-muted-foreground">{t("landing.ctaBody")}</p>
-            <Button asChild size="lg" className="glow mt-8 h-14 rounded-2xl px-8 text-base active:scale-95">
-              <Link to="/auth">
-                {t("landing.ctaButton")} <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-border px-5 py-10 text-center text-sm text-muted-foreground">
-        <p className="font-display text-lg font-bold text-foreground">
-          Di<span className="text-primary">STRUB</span>
-        </p>
-        <p className="mt-2">{t("footer.legal")}</p>
-        <p className="mt-1">© 2026 DiSTRUB. {t("footer.rights")}</p>
-      </footer>
+      </div>
     </div>
+  );
+}
+
+function HowItWorks() {
+  const { t } = useT();
+  const steps = ["a", "b", "c"];
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
+      <Eyebrow>{t("s1.eyebrow")}</Eyebrow>
+      <h2 className="mt-4 text-4xl font-bold md:text-6xl">{t("s1.title")}</h2>
+      <p className="mt-4 max-w-xl text-muted-foreground">{t("s1.sub")}</p>
+      <div className="mt-10 grid gap-3 md:grid-cols-3">
+        {steps.map((k, i) => (
+          <Reveal key={k} i={i}>
+            <Link to="/markets" className="glass group flex h-full min-h-48 flex-col rounded-2xl p-6 transition-colors hover:bg-secondary">
+              <span className="tabular text-xs text-primary-glow">0{i + 1}</span>
+              <h3 className="mt-6 text-lg font-bold">{t(`s1.${k}.t`)}</h3>
+              <p className="mt-2 flex-1 text-sm text-muted-foreground">{t(`s1.${k}.d`)}</p>
+              <ArrowRight className="mt-4 size-4 self-end text-primary-glow transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TrustSection() {
+  const { t } = useT();
+  const bars = [
+    { k: "s2.p", v: 91 },
+    { k: "s2.s", v: 87 },
+    { k: "s2.pt", v: 94 },
+  ];
+  return (
+    <section className="relative overflow-hidden border-y border-border">
+      <div className="mesh pointer-events-none absolute -left-1/3 top-0 h-full w-2/3 opacity-40" />
+      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 md:grid-cols-[1.3fr_1fr] md:py-28">
+        <div>
+          <Eyebrow>{t("s2.eyebrow")}</Eyebrow>
+          <h2 className="mt-4 text-4xl font-bold md:text-6xl">{t("s2.title")}</h2>
+          <p className="mt-4 max-w-lg text-muted-foreground">{t("s2.sub")}</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {bars.map((b) => (
+              <span key={b.k} className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs">
+                <CheckCircle2 className="size-3.5 text-yes" /> {t(b.k)}
+              </span>
+            ))}
+          </div>
+          <Button asChild className="glow mt-8 h-12 rounded-xl px-6 active:scale-95">
+            <Link to="/deal-room">
+              {t("s2.cta")} <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+        <Reveal className="glass rounded-2xl p-6">
+          <p className="text-[11px] uppercase tracking-[0.15em] text-primary-glow">{t("s2.index")}</p>
+          <p className="font-display mt-4 text-6xl font-bold">
+            <CountUp value={92} />
+            <span className="text-xl text-muted-foreground">/100</span>
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("s2.audit")}</p>
+          <div className="mt-6 space-y-4">
+            {bars.map((b) => (
+              <div key={b.k}>
+                <div className="flex justify-between text-xs">
+                  <span>{t(b.k)}</span>
+                  <span className="tabular text-muted-foreground">{b.v}</span>
+                </div>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary">
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: b.v / 100 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full origin-left rounded-full bg-gradient-to-r from-primary to-yes"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function AssetSection() {
+  const { t } = useT();
+  const cards = [
+    { k: "a", icon: Radio, to: "/reach" },
+    { k: "b", icon: BarChart3, to: "/markets" },
+    { k: "c", icon: Gavel, to: "/management" },
+    { k: "d", icon: Sparkles, to: "/value" },
+  ] as const;
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
+      <Eyebrow>{t("s3.eyebrow")}</Eyebrow>
+      <h2 className="mt-4 max-w-xl text-4xl font-bold md:text-6xl">{t("s3.title")}</h2>
+      <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map(({ k, icon: Icon, to }, i) => (
+          <Reveal key={k} i={i}>
+            <Link to={to} className="glass flex h-full flex-col rounded-2xl p-5 transition-colors hover:bg-secondary">
+              <div className="flex items-start justify-between">
+                <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15">
+                  <Icon className="size-4 text-primary-glow" />
+                </span>
+                <span className="tabular text-xs text-muted-foreground">0{i + 1}</span>
+              </div>
+              <h3 className="mt-6 font-bold">{t(`s3.${k}.t`)}</h3>
+              <p className="mt-2 flex-1 text-sm text-muted-foreground">{t(`s3.${k}.d`)}</p>
+              <Spark up={i !== 1} className="mt-4 h-6 w-full opacity-70" />
+            </Link>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SchoolSection() {
+  const { t } = useT();
+  const items = ["a", "b", "c"];
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-10">
+      <div className="rounded-3xl bg-cream p-6 text-cream-foreground md:p-12">
+        <div className="flex size-20 flex-col items-center justify-center rounded-2xl bg-background text-foreground">
+          <GraduationCap className="size-5 text-primary-glow" />
+          <span className="font-display mt-1 text-center text-[10px] font-bold leading-tight">DISTRUB<br />SCHOOL</span>
+        </div>
+        <div className="mt-6">
+          <Eyebrow tone="cream">{t("sc.eyebrow")}</Eyebrow>
+        </div>
+        <h2 className="mt-4 max-w-2xl text-3xl font-bold md:text-5xl">{t("sc.title")}</h2>
+        <p className="mt-4 max-w-xl text-cream-muted">{t("sc.sub")}</p>
+        <Button asChild className="mt-6 h-11 rounded-xl bg-background px-5 text-foreground hover:bg-background/90">
+          <Link to="/school">
+            {t("sc.cta")} <ArrowRight />
+          </Link>
+        </Button>
+        <div className="mt-10 grid divide-y divide-cream-foreground/15 rounded-2xl border border-cream-foreground/15 md:grid-cols-3 md:divide-x md:divide-y-0">
+          {items.map((k, i) => (
+            <Link key={k} to="/school" className="group flex min-h-40 flex-col p-6">
+              <span className="tabular text-xs text-cream-muted">0{i + 1}</span>
+              <h3 className="mt-4 font-bold">{t(`sc.${k}.t`)}</h3>
+              <p className="mt-2 flex-1 text-sm text-cream-muted">{t(`sc.${k}.d`)}</p>
+              <ArrowRight className="mt-4 size-4 self-end transition-transform group-hover:translate-x-1" />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FoundingSection() {
+  const { t } = useT();
+  const qc = useQueryClient();
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("creator");
+  const [size, setSize] = useState("");
+  const [busy, setBusy] = useState(false);
+  const { data: counts } = useQuery({
+    queryKey: ["founding-counts"],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("founding_counts");
+      return (data as { creators: number; buyers: number } | null) ?? { creators: 0, buyers: 0 };
+    },
+  });
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    const { error } = await supabase.from("founding_waitlist").insert({
+      email: email.trim().toLowerCase(),
+      phone: phone.trim() || null,
+      role,
+      audience_size: size.trim() || null,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.code === "23505" ? t("w.dup") : error.message);
+      return;
+    }
+    toast.success(t("w.done"));
+    setEmail("");
+    setPhone("");
+    setSize("");
+    qc.invalidateQueries({ queryKey: ["founding-counts"] });
+  }
+
+  const left = [
+    { icon: Users, v: Math.max(0, 100 - (counts?.creators ?? 0)), k: "w.creators" },
+    { icon: ShoppingBag, v: Math.max(0, 500 - (counts?.buyers ?? 0)), k: "w.buyers" },
+  ];
+
+  return (
+    <section id="founding" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-20">
+      <div className="glass grid gap-10 rounded-3xl p-6 md:grid-cols-2 md:p-12">
+        <div>
+          <Eyebrow>{t("w.eyebrow")}</Eyebrow>
+          <h2 className="mt-4 text-4xl font-bold md:text-5xl">{t("w.title")}</h2>
+          <p className="mt-4 text-sm text-muted-foreground">{t("w.sub")}</p>
+          <div className="mt-8 grid grid-cols-2 gap-3">
+            {left.map(({ icon: Icon, v, k }) => (
+              <div key={k} className="rounded-2xl border border-border p-4">
+                <Icon className="size-4 text-primary-glow" />
+                <p className="font-display mt-3 text-3xl font-bold">
+                  <CountUp value={v} />
+                </p>
+                <p className="text-xs text-muted-foreground">{t(k)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <form onSubmit={submit} className="grid content-center gap-3 sm:grid-cols-2">
+          <label className="space-y-1.5 text-xs text-muted-foreground">
+            {t("w.email")}
+            <Input required type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" className="h-11 rounded-xl" />
+          </label>
+          <label className="space-y-1.5 text-xs text-muted-foreground">
+            {t("w.phone")}
+            <Input type="tel" maxLength={30} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+33…" className="h-11 rounded-xl" />
+          </label>
+          <label className="space-y-1.5 text-xs text-muted-foreground">
+            {t("w.role")}
+            <select value={role} onChange={(e) => setRole(e.target.value)} className="h-11 w-full rounded-xl border border-input bg-transparent px-3 text-sm text-foreground">
+              <option value="creator" className="bg-popover">{t("w.roleCreator")}</option>
+              <option value="buyer" className="bg-popover">{t("w.roleBuyer")}</option>
+            </select>
+          </label>
+          <label className="space-y-1.5 text-xs text-muted-foreground">
+            {t("w.size")}
+            <Input maxLength={40} value={size} onChange={(e) => setSize(e.target.value)} placeholder="e.g. 25k" className="h-11 rounded-xl" />
+          </label>
+          <Button disabled={busy} className="glow h-12 rounded-xl sm:col-span-2 active:scale-95">
+            {t("w.submit")} <ArrowRight />
+          </Button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+function FinalCta() {
+  const { t } = useT();
+  return (
+    <section className="relative overflow-hidden px-5 py-24 text-center md:py-32">
+      <div className="mesh pointer-events-none absolute inset-x-0 top-1/4 mx-auto h-2/3 max-w-3xl opacity-50" />
+      <div className="relative">
+        <p className="text-[11px] uppercase tracking-[0.2em] text-primary-glow">DiSTRUB</p>
+        <h2 className="mx-auto mt-4 max-w-2xl text-4xl font-bold md:text-6xl">{t("f.title")}</h2>
+        <p className="mt-4 text-muted-foreground">{t("f.sub")}</p>
+        <Button asChild className="glow mt-8 h-12 rounded-xl px-6 active:scale-95">
+          <Link to="/deal-room">
+            {t("s2.cta")} <ArrowRight />
+          </Link>
+        </Button>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  const { t } = useT();
+  const links = [
+    { to: "/school", k: "nav.school" },
+    { to: "/markets", k: "nav.markets" },
+    { to: "/deal-room", k: "nav.dealRoom" },
+    { to: "/wallet", k: "nav.wallet" },
+  ] as const;
+  return (
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex size-7 items-center justify-center rounded-lg bg-primary font-display text-xs font-bold text-primary-foreground">D</span>
+          <span className="font-display font-bold text-foreground">DISTRUB</span>
+          <span>{t("f.tag")}</span>
+        </div>
+        <nav className="flex gap-5">
+          {links.map((l) => (
+            <Link key={l.to} to={l.to} className="hover:text-foreground">
+              {t(l.k)}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </footer>
   );
 }
