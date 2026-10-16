@@ -47,5 +47,16 @@
   "wallet.history": "Historial",
   "wallet.noHistory": "Sin transacciones.",
   "legal.purchasedUse": "Los DSC comprados solo sirven para reservas de Reach y tasas de subasta. No se pueden apostar ni retirar, y solo se reembolsan a la tarjeta original.",
-  "wallet.demoMode": "Modo demo: no se cobra ninguna tarjeta."
+  "wallet.demoMode": "Modo demo: no se cobra ninguna tarjeta.",
+  "landing.yes": "SÍ",
+  "landing.no": "NO",
+  "landing.trending": "Tendencia",
+  "landing.stat.creators": "Creadores listados",
+  "landing.stat.volume": "DSC operados",
+  "landing.stat.markets": "Mercados activos",
+  "landing.liveTitle": "Mercados en vivo",
+  "landing.seeAll": "Ver todo",
+  "landing.ctaTitle": "Tu audiencia tiene un precio.",
+  "landing.ctaBody": "Únete gratis y recibe DSC promocionales para empezar hoy.",
+  "landing.ctaButton": "Empezar"
 }

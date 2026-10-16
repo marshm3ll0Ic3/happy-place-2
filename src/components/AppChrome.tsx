@@ -41,7 +41,7 @@ export function LangSwitcher() {
 export function TopNav() {
   const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/70 backdrop-blur-xl md:block">
+    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl md:block">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Logo />
         <nav className="flex gap-1">

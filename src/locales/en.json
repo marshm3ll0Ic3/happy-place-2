@@ -47,5 +47,16 @@
   "wallet.history": "History",
   "wallet.noHistory": "No transactions yet.",
   "legal.purchasedUse": "Purchased DSC can only be used for Reach bookings and auction fees. It cannot be staked on markets or withdrawn, and is refundable only to the original card.",
-  "wallet.demoMode": "Demo mode: no card is charged."
+  "wallet.demoMode": "Demo mode: no card is charged.",
+  "landing.yes": "YES",
+  "landing.no": "NO",
+  "landing.trending": "Trending now",
+  "landing.stat.creators": "Creators listed",
+  "landing.stat.volume": "DSC traded",
+  "landing.stat.markets": "Live markets",
+  "landing.liveTitle": "Live markets",
+  "landing.seeAll": "See all",
+  "landing.ctaTitle": "Your audience has a price.",
+  "landing.ctaBody": "Join free and get promotional DSC to start calling markets today.",
+  "landing.ctaButton": "Get started"
 }
