@@ -110,3 +110,22 @@ export function CountUp({ value, className }: { value: number; className?: strin
     </span>
   );
 }
+
+function AccountButton() {
+  const { t } = useT();
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
+    return () => data.subscription.unsubscribe();
+  }, []);
+  if (signedIn === null) return <div className="h-11 w-24" />;
+  return (
+    <Link
+      to={signedIn ? "/wallet" : "/auth"}
+      className="glow flex h-11 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground"
+    >
+      {t(signedIn ? "nav.wallet" : "nav.signIn")}
+    </Link>
+  );
+}
