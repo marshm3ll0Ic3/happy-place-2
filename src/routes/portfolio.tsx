@@ -6,6 +6,9 @@ import { ArrowRight, BarChart3, ChevronDown, History, Share2, Target, Trophy } f
 import { Button } from "@/components/ui/button";
 import { CountUp } from "@/components/AppChrome";
 import { useT } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { currentPrice } from "@/lib/market-prices";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -110,17 +113,23 @@ function Portfolio() {
           </Button>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        {!live && (
+          <div className="mt-10 flex items-center justify-between gap-4 rounded-md border border-border bg-card px-5 py-3 text-sm">
+            <span className="text-muted-foreground">{t("pf.sample")}</span>
+            <Button asChild size="sm" className="rounded-sm"><Link to="/auth">{t("pf.signIn")}</Link></Button>
+          </div>
+        )}
+        <div className={`${live ? "mt-12" : "mt-4"} grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div className="bg-card p-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t("pf.value")}</p>
             <p className="font-mono tabular mt-4 text-5xl font-medium">
-              <CountUp value={12740} /> <span className="text-sm text-muted-foreground">DSC</span>
+              <CountUp value={value} /> <span className="text-sm text-muted-foreground">DSC</span>
             </p>
             <div className="mt-4 flex items-end justify-between gap-4">
               <svg viewBox="0 0 80 24" preserveAspectRatio="none" className="h-10 flex-1 text-primary-glow">
                 <polyline points="0,20 10,18 20,19 30,14 40,15 50,9 60,10 70,6 80,3" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
               </svg>
-              <span className="font-mono shrink-0 text-xs text-yes">+8.4% {t("pf.season")}</span>
+              {live ? <span className="font-mono shrink-0 text-xs text-muted-foreground">{t("pf.balance")}</span> : <span className="font-mono shrink-0 text-xs text-yes">+8.4% {t("pf.season")}</span>}
             </div>
           </div>
           {stats.map(({ icon: Icon, k, v, s }) => (
@@ -146,7 +155,7 @@ function Portfolio() {
                   onClick={() => setTab(k)}
                   className={`font-mono flex items-center gap-2 rounded-sm px-3 py-1.5 text-xs uppercase transition-colors ${tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
-                  {t(`pf.${k}`)} <span className="opacity-70">{k === "open" ? OPEN.length : CLOSED.length}</span>
+                  {t(`pf.${k}`)} <span className="opacity-70">{k === "open" ? openList.length : closedList.length}</span>
                 </button>
               ))}
             </div>
@@ -155,9 +164,15 @@ function Portfolio() {
             <ChevronDown className="size-3" /> {rows.length} {t("pf.count")}
           </p>
           <div className="max-h-[420px] divide-y divide-border overflow-y-auto">
+            {rows.length === 0 && (
+              <div className="flex flex-col items-center gap-3 px-6 py-12 text-sm text-muted-foreground">
+                {t("pf.empty")}
+                <Button asChild variant="outline" size="sm" className="rounded-sm"><Link to="/markets">{t("pf.find")} <ArrowRight /></Link></Button>
+              </div>
+            )}
             {rows.map((r, i) => (
               <motion.div
-                key={tab + r.q}
+                key={tab + r.q + i}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
