@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { motion, animate, useInView } from "framer-motion";
 import { BarChart3, Gem, Megaphone, Wallet, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useT, LANGS, type Lang } from "@/lib/i18n";
 
 export const TABS = [
