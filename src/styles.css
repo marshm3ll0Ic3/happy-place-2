@@ -33,6 +33,9 @@
   --color-yes: var(--yes);
   --color-no: var(--no);
   --color-glass: var(--glass);
+  --color-cream: var(--cream);
+  --color-cream-foreground: var(--cream-foreground);
+  --color-cream-muted: var(--cream-muted);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -60,6 +63,9 @@
   --yes: oklch(0.723 0.219 149.6);
   --no: oklch(0.637 0.237 25.3);
   --glass: oklch(1 0 0 / 4%);
+  --cream: oklch(0.94 0.012 85);
+  --cream-foreground: oklch(0.18 0.01 270);
+  --cream-muted: oklch(0.45 0.01 270);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.606 0.25 292.7);
