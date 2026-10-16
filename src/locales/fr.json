@@ -45,5 +45,7 @@
   "wallet.waitlisted": "Inscrit",
   "wallet.waitlistJoined": "Vous êtes sur la liste d'attente.",
   "wallet.history": "Historique",
-  "wallet.noHistory": "Aucune transaction."
+  "wallet.noHistory": "Aucune transaction.",
+  "legal.purchasedUse": "Les DSC achetés servent uniquement aux réservations Reach et frais d'enchères. Ils ne peuvent être misés ni retirés, et ne sont remboursables que sur la carte d'origine.",
+  "wallet.demoMode": "Mode démo : aucune carte n'est débitée."
 }
