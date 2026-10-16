@@ -41,15 +41,56 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
+type DbOrder = { id: string; market_slug: string; market_question: string; market_category: string; side: string; price_cents: number; shares: number; status: string };
+
 function Portfolio() {
   const { t } = useT();
   const [tab, setTab] = useState<"open" | "closed">("open");
-  const rows = tab === "open" ? OPEN : CLOSED;
+
+  const { data: me } = useQuery({
+    queryKey: ["mk-me"],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return null;
+      const { data: b } = await supabase.from("my_balances").select("*");
+      const bal = { promotional: 0, restricted: 0, convertible: 0 };
+      b?.forEach((r) => r.bucket && (bal[r.bucket as keyof typeof bal] = r.balance ?? 0));
+      return { userId: u.user.id, total: bal.promotional + bal.restricted + bal.convertible };
+    },
+  });
+  const { data: orders = [] } = useQuery({
+    queryKey: ["mk-orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+      if (error) return [] as DbOrder[];
+      return (data ?? []) as DbOrder[];
+    },
+    enabled: !!me,
+  });
+
+  const live = !!me;
+  const toC = (o: DbOrder): C => {
+    const cur = o.status === "cancelled" ? o.price_cents : currentPrice(o.market_slug, o.side, o.price_cents);
+    return {
+      tag: o.status === "cancelled" ? `${o.market_category} · ${t("pf.cancelled")}` : o.market_category,
+      q: o.market_question, side: o.side === "no" ? "NO" : "YES",
+      a: o.price_cents, b: cur, shares: o.shares,
+      pnl: Math.round((o.shares * (cur - o.price_cents)) / 100),
+    };
+  };
+  const openList = live ? orders.filter((o) => o.status === "open").map(toC) : OPEN;
+  const closedList = live ? orders.filter((o) => o.status !== "open").map(toC) : CLOSED;
+  const rows = tab === "open" ? openList : closedList;
+
+  const exposure = live ? Math.round(orders.filter((o) => o.status === "open").reduce((s, o) => s + (o.shares * o.price_cents) / 100, 0)) : 3670;
+  const pnl = live ? [...openList, ...closedList].reduce((s, c) => s + c.pnl, 0) : 1914;
+  const value = live ? me!.total + pnl : 12740;
+  const fmt = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toLocaleString()} DSC`;
 
   const stats = [
-    { icon: BarChart3, k: "pf.pnl", v: <span className="text-yes">+1,914 DSC</span>, s: t("pf.pnlSub") },
-    { icon: Target, k: "pf.exposure", v: "3,670 DSC", s: t("pf.exposureSub") },
-    { icon: Trophy, k: "pf.rank", v: "#27", s: `3,142 ${t("pf.participants")}` },
+    { icon: BarChart3, k: "pf.pnl", v: <span className={pnl >= 0 ? "text-yes" : "text-no"}>{fmt(pnl)}</span>, s: t("pf.pnlSub") },
+    { icon: Target, k: "pf.exposure", v: `${exposure.toLocaleString()} DSC`, s: t("pf.exposureSub") },
+    { icon: Trophy, k: "pf.rank", v: live ? "—" : "#27", s: live ? t("pf.rankSoon") : `3,142 ${t("pf.participants")}` },
   ];
 
   return (
