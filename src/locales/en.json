@@ -29,5 +29,21 @@
   "wallet.restricted": "Restricted",
   "wallet.convertible": "Convertible",
   "wallet.buy": "Buy credits",
-  "lang": "Language"
+  "lang": "Language",
+  "auth.signIn": "Sign in",
+  "auth.signUp": "Create account",
+  "auth.google": "Continue with Google",
+  "auth.or": "or",
+  "auth.email": "Email",
+  "auth.password": "Password",
+  "auth.toSignUp": "New here? Create an account",
+  "auth.toSignIn": "Have an account? Sign in",
+  "auth.checkEmail": "Check your email to confirm your account.",
+  "auth.signOut": "Sign out",
+  "wallet.conversionLocked": "Conversion to cash is locked until a licensed operator is connected.",
+  "wallet.joinWaitlist": "Join waitlist",
+  "wallet.waitlisted": "On the waitlist",
+  "wallet.waitlistJoined": "You're on the waitlist.",
+  "wallet.history": "History",
+  "wallet.noHistory": "No transactions yet."
 }
