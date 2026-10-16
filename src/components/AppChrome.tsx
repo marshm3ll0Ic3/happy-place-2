@@ -56,7 +56,10 @@ export function TopNav() {
             </Link>
           ))}
         </nav>
-        <LangSwitcher />
+        <div className="flex items-center gap-2">
+          <LangSwitcher />
+          <AccountButton />
+        </div>
       </div>
     </header>
   );
