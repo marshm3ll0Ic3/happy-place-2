@@ -104,7 +104,7 @@ export function TopNav() {
           <Link to="/markets" aria-label={t("nav.search")} className="glass flex size-9 items-center justify-center rounded-sm">
             <Search className="size-4 text-muted-foreground" />
           </Link>
-          <LangChips />
+          <LangDropdown />
           <AccountButton />
         </div>
       </div>
