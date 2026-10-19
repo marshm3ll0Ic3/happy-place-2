@@ -243,6 +243,63 @@ export type Database = {
         }
         Relationships: []
       }
+      talent_applications: {
+        Row: {
+          adult_confirmed: boolean
+          alias: string
+          budget: Json
+          commercial_consent: boolean
+          constraints: string
+          country: string
+          created_at: string
+          evidence_consent: boolean
+          id: string
+          milestone: string
+          niche: string
+          public_consent: boolean
+          status: string
+          updated_at: string
+          user_id: string
+          work_sample_url: string
+        }
+        Insert: {
+          adult_confirmed?: boolean
+          alias?: string
+          budget?: Json
+          commercial_consent?: boolean
+          constraints?: string
+          country?: string
+          created_at?: string
+          evidence_consent?: boolean
+          id?: string
+          milestone?: string
+          niche?: string
+          public_consent?: boolean
+          status?: string
+          updated_at?: string
+          user_id?: string
+          work_sample_url?: string
+        }
+        Update: {
+          adult_confirmed?: boolean
+          alias?: string
+          budget?: Json
+          commercial_consent?: boolean
+          constraints?: string
+          country?: string
+          created_at?: string
+          evidence_consent?: boolean
+          id?: string
+          milestone?: string
+          niche?: string
+          public_consent?: boolean
+          status?: string
+          updated_at?: string
+          user_id?: string
+          work_sample_url?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           created_at: string
