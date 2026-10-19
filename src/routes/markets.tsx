@@ -259,7 +259,7 @@ function Markets() {
           </span>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border grid-cols-2 lg:grid-cols-4">
           {stats.map(({ icon: Icon, k, v, s }) => (
             <div key={k} className="flex flex-col bg-card p-6">
               <Icon className="size-4 text-primary" />
