@@ -131,6 +131,11 @@ export function MobileTopBar() {
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}
+              {TABS.filter((x) => x.to !== "/markets").map((tab) => (
+                <DropdownMenuItem key={tab.to} asChild className="hidden h-10 rounded-sm text-sm md:flex">
+                  <Link to={tab.to}>{t(tab.key)}</Link>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
