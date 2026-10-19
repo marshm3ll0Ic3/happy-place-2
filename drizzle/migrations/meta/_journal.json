@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792415958930,
+      "tag": "0000_remix_baseline",
+      "breakpoints": true
+    }
+  ]
+}

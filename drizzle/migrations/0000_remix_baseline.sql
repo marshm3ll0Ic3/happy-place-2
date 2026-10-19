@@ -1,0 +1,2 @@
+-- Empty baseline for the remixed project.
+-- Copied migration history was cleared; no application schema or data changes.
