@@ -1,0 +1,46 @@
+name: Mirror to happy-place-2
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    name: Mirror Repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH Key and Sync Mirror
+        env:
+          MIRROR_DEPLOY_KEY: ${{ secrets.MIRROR_DEPLOY_KEY }}
+          TARGET_REPO_PAT: ${{ secrets.TARGET_REPO_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          if [ -n "$MIRROR_DEPLOY_KEY" ]; then
+            echo "Using SSH Deploy Key for authentication..."
+            mkdir -p ~/.ssh
+            echo "$MIRROR_DEPLOY_KEY" > ~/.ssh/id_ed25519
+            chmod 600 ~/.ssh/id_ed25519
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+            TARGET_URL="git@github.com:marshm3ll0Ic3/happy-place-2.git"
+          elif [ -n "$TARGET_REPO_PAT" ]; then
+            echo "Using Personal Access Token for authentication..."
+            TARGET_URL="https://x-access-token:${TARGET_REPO_PAT}@github.com/marshm3ll0Ic3/happy-place-2.git"
+          else
+            echo "Error: Neither MIRROR_DEPLOY_KEY nor TARGET_REPO_PAT secret is set."
+            exit 1
+          fi
+
+          echo "Cloning source repository mirror..."
+          git clone --mirror "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" source_mirror.git
+          cd source_mirror.git
+
+          echo "Pushing mirror to destination repository (marshm3ll0Ic3/happy-place-2)..."
+          git push --mirror --prune "$TARGET_URL"
+
+          echo "Mirror completed successfully!"
