@@ -59,8 +59,8 @@ function Wallet() {
     return (
       <ShellPage titleKey="nav.wallet">
         <div className="mt-6 space-y-3">
-          <div className="glass h-32 animate-pulse rounded-3xl" />
-          <div className="glass h-20 animate-pulse rounded-2xl" />
+          <div className="glass h-32 animate-pulse rounded-sm" />
+          <div className="glass h-20 animate-pulse rounded-sm" />
         </div>
       </ShellPage>
     );
@@ -75,28 +75,28 @@ function Wallet() {
 
   return (
     <ShellPage titleKey="nav.wallet">
-      <div className="glass mt-6 rounded-3xl p-6">
+      <div className="glass mt-6 rounded-sm p-6">
         <p className="text-sm text-muted-foreground">{t("wallet.total")}</p>
-        <p className="font-display mt-1 text-5xl font-bold">
+        <p className="font-display mt-1 text-4xl font-bold md:text-5xl">
           <CountUp value={total} /> <span className="text-xl text-muted-foreground">DSC</span>
         </p>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-3">
         {rows.map(([k, v]) => (
-          <div key={k} className="glass rounded-2xl p-4">
+          <div key={k} className="glass rounded-sm p-4">
             <p className="flex items-center gap-1 text-xs text-muted-foreground">
               {k === "wallet.convertible" && <Lock className="size-3" />}
               {t(k)}
             </p>
-            <p className="font-display mt-1 text-2xl font-bold">
+            <p className="font-display mt-1 text-lg font-bold tabular md:text-2xl">
               <CountUp value={v} />
             </p>
           </div>
         ))}
       </div>
-      <div className="glass mt-3 flex items-center justify-between gap-3 rounded-2xl p-4">
+      <div className="glass mt-3 flex items-center justify-between gap-3 rounded-sm p-4">
         <p className="text-xs text-muted-foreground">{t("wallet.conversionLocked")}</p>
-        <Button size="sm" variant="secondary" disabled={waitlisted} onClick={joinWaitlist} className="min-h-11 shrink-0 rounded-xl">
+        <Button size="sm" variant="secondary" disabled={waitlisted} onClick={joinWaitlist} className="min-h-11 shrink-0 rounded-sm">
           {waitlisted ? t("wallet.waitlisted") : t("wallet.joinWaitlist")}
         </Button>
       </div>
@@ -105,7 +105,7 @@ function Wallet() {
       <ul className="mt-3 space-y-2">
         {entries.length === 0 && <li className="text-sm text-muted-foreground">{t("wallet.noHistory")}</li>}
         {entries.map((e) => (
-          <li key={e.id} className="glass flex items-center justify-between rounded-2xl p-4">
+          <li key={e.id} className="glass flex items-center justify-between gap-3 rounded-sm p-4">
             <div>
               <p className="text-sm font-medium">{e.transactions?.description ?? e.transactions?.type}</p>
               <p className="text-xs text-muted-foreground">
