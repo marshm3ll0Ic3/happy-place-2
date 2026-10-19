@@ -11,27 +11,30 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in — DiSTRUB" },
-      { name: "description", content: "Sign in to the attention exchange." },
+      { name: "description", content: "Sign in to your DiSTRUB talent account." },
       { property: "og:title", content: "Sign in — DiSTRUB" },
-      { property: "og:description", content: "Sign in to the attention exchange." },
+      { property: "og:description", content: "Sign in to your DiSTRUB talent account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  validateSearch:(s:Record<string,unknown>)=>({returnTo:s["returnTo"]==="application"?"application":"wallet"}),
   component: AuthPage,
 });
 
 function AuthPage() {
   const { t } = useT();
   const nav = useNavigate();
+  const {returnTo}=Route.useSearch();
+  const destination=returnTo==="application"?"/application":"/wallet";
   const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => data.user && nav({ to: "/wallet" }));
-  }, [nav]);
+    supabase.auth.getUser().then(({ data }) => data.user && nav({ to: destination }));
+  }, [nav,destination]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,12 +46,12 @@ function AuthPage() {
         options: { emailRedirectTo: window.location.origin + "/wallet" },
       });
       if (error) toast.error(error.message);
-      else if (data.session) nav({ to: "/wallet" });
-      else toast.success(t("auth.checkEmail"));
+      else if (data.session) nav({ to: destination });
+      else toast.error(t("auth.trySignIn"));
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) toast.error(error.message);
-      else nav({ to: "/wallet" });
+      else nav({ to: destination });
     }
     setBusy(false);
   }
