@@ -34,7 +34,7 @@ function Reach() {
   const [sel, setSel] = useState(0);
   const [posts, setPosts] = useState(1);
   const list = useMemo(() => OFFERS.filter((o) => plat === "all" || o.p === plat), [plat]);
-  const o = OFFERS[sel];
+  const o = OFFERS[sel] ?? OFFERS[0];
 
   return (
     <main className="mx-auto max-w-6xl px-5 pb-28 pt-10 md:pb-16 md:pt-16">
