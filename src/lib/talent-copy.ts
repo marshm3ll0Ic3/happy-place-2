@@ -1,10 +1,10 @@
 import { useT, type Lang } from "@/lib/i18n";
 
 export type Copy = readonly [string, string, string, string];
-export function translate(copy: Copy, lang: Lang) { return copy[lang === "fr" ? 1 : lang === "es" ? 2 : lang === "ru" ? 3 : 0]; }
+export function translate(copy: readonly string[], lang: Lang) { return copy[lang === "fr" ? 1 : lang === "es" ? 2 : lang === "ru" ? 3 : 0] ?? copy[0] ?? ""; }
 export function useTalentCopy() {
   const { lang } = useT();
-  return { lang, text: (copy: Copy) => translate(copy, lang), money: (amount: number) => new Intl.NumberFormat(lang, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(amount), date: (date: string) => new Intl.DateTimeFormat(lang, { dateStyle: "medium", timeStyle: "short" }).format(new Date(date)) };
+  return { lang, text: (copy: readonly string[]) => translate(copy, lang), money: (amount: number) => new Intl.NumberFormat(lang, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(amount), date: (date: string) => new Intl.DateTimeFormat(lang, { dateStyle: "medium", timeStyle: "short" }).format(new Date(date)) };
 }
 
 export const copy = {

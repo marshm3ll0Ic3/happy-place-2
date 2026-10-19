@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { type SearchSchemaInput, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  validateSearch:(s:Record<string,unknown>)=>({returnTo:s["returnTo"]==="application"?"application":"wallet"}),
+  validateSearch:(s:SearchSchemaInput & Record<string,unknown>)=>({returnTo:s["returnTo"]==="application"?"application":"wallet"}),
   component: AuthPage,
 });
 

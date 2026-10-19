@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { type SearchSchemaInput, createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DemoNotice, TalentCard, TalentPageHeading } from "@/components/TalentUI";
@@ -8,7 +8,7 @@ import { pageMeta } from "@/lib/route-meta";
 
 export const Route = createFileRoute("/talents")({
   head: () => pageMeta("Discover talents", "Explore fictional talent programmes, skills, essential resources and 365-day outcomes."),
-  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s['q'] === "string" ? s['q'] : "", status: ["active", "funding", "preparation"].includes(String(s['status'])) ? String(s['status']) : "all", resource: ["rent", "software", "connectivity"].includes(String(s['resource'])) ? String(s['resource']) : "all", sort: s['sort'] === "funding" ? "funding" : "recent" }),
+  validateSearch: (s: SearchSchemaInput & Record<string, unknown>) => ({ q: typeof s['q'] === "string" ? s['q'] : "", status: ["active", "funding", "preparation"].includes(String(s['status'])) ? String(s['status']) : "all", resource: ["rent", "software", "connectivity"].includes(String(s['resource'])) ? String(s['resource']) : "all", sort: s['sort'] === "funding" ? "funding" : "recent" }),
   component: Talents,
 });
 function Talents() {
