@@ -86,7 +86,7 @@ const DESKTOP_NAV = [
 export function TopNav() {
   const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl md:block">
+    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl lg:block">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
         <Logo />
         <nav className="flex gap-1">
@@ -116,8 +116,8 @@ export function TopNav() {
 export function MobileTopBar() {
   const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl md:hidden">
-      <div className="flex h-14 items-center justify-between gap-2 px-4">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl lg:hidden">
+      <div className="flex h-14 items-center justify-between gap-2 px-4 md:h-16 md:px-6">
         <Logo />
         <div className="flex shrink-0 items-center gap-2">
           <LangDropdown />
@@ -128,6 +128,11 @@ export function MobileTopBar() {
             <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
               {DESKTOP_NAV.map((tab) => (
                 <DropdownMenuItem key={tab.to} asChild className="h-10 rounded-sm text-sm">
+                  <Link to={tab.to}>{t(tab.key)}</Link>
+                </DropdownMenuItem>
+              ))}
+              {TABS.filter((x) => x.to !== "/markets").map((tab) => (
+                <DropdownMenuItem key={tab.to} asChild className="hidden h-10 rounded-sm text-sm md:flex">
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}

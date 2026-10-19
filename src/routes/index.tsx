@@ -136,11 +136,11 @@ function Hero() {
           </motion.div>
         </div>
 
-        <div className="hairline bg-card mt-14 grid grid-cols-3 divide-x divide-border rounded-md">
+        <div className="hairline bg-card mt-14 grid grid-cols-1 divide-y divide-border rounded-md sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {stats.map((s) => (
-            <div key={s.k} className="p-4 md:p-6">
+            <div key={s.k} className="flex min-w-0 items-baseline justify-between gap-3 p-4 sm:block md:p-6">
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground md:text-[11px]">{t(s.k)}</p>
-              <p className="font-mono tabular mt-2 text-lg font-medium md:text-3xl">
+              <p className="font-mono tabular truncate text-lg font-medium sm:mt-2 md:text-2xl lg:text-3xl">
                 <CountUp value={s.v} />
               </p>
             </div>

@@ -157,9 +157,9 @@ function Community() {
             {[[Award, "Ask 10", 100], [BookOpen, "Curious", 250], [ShieldCheck, "Trusted", 500]].map(([I, n, xp]) => {
               const Icon = I as typeof Award;
               return (
-                <div key={n as string} className="bg-background p-4">
+                <div key={n as string} className="min-w-0 bg-background p-3 sm:p-4">
                   <Icon className="size-4 text-primary" />
-                  <p className="font-mono mt-3 text-[11px] uppercase">{n as string}</p>
+                  <p className="font-mono mt-3 break-words text-[10px] uppercase sm:text-[11px]">{n as string}</p>
                   <p className="font-mono text-[10px] text-muted-foreground">+{xp as number} XP</p>
                 </div>
               );
