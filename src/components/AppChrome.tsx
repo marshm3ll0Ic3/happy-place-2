@@ -1,10 +1,11 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion, animate, useInView } from "framer-motion";
-import { BarChart3, Gem, Megaphone, Wallet, User, Search, Globe, ChevronDown } from "lucide-react";
+import { BarChart3, Gem, Megaphone, Wallet, User, Search, Globe, ChevronDown, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -106,6 +107,32 @@ export function TopNav() {
           </Link>
           <LangDropdown />
           <AccountButton />
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function MobileTopBar() {
+  const { t } = useT();
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl md:hidden">
+      <div className="flex h-14 items-center justify-between gap-2 px-4">
+        <Logo />
+        <div className="flex shrink-0 items-center gap-2">
+          <LangDropdown />
+          <DropdownMenu>
+            <DropdownMenuTrigger aria-label={t("nav.menu")} className="glass flex size-9 items-center justify-center rounded-sm outline-none">
+              <Menu className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
+              {DESKTOP_NAV.map((tab) => (
+                <DropdownMenuItem key={tab.to} asChild className="h-10 rounded-sm text-sm">
+                  <Link to={tab.to}>{t(tab.key)}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

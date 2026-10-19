@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
-import { TopNav, BottomTabs } from "@/components/AppChrome";
+import { TopNav, BottomTabs, MobileTopBar } from "@/components/AppChrome";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -133,6 +133,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <TopNav />
+        <MobileTopBar />
         <Outlet />
         <BottomTabs />
         <Toaster theme="dark" position="top-center" />
