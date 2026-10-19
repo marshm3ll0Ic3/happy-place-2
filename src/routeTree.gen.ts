@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as DealRoomRouteImport } from './routes/deal-room'
@@ -24,6 +25,7 @@ import { Route as SchoolRouteImport } from './routes/school'
 import { Route as TalentsRouteImport } from './routes/talents'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as ValueRouteImport } from './routes/value'
+import { Route as AuthenticatedApplicationRouteImport } from './routes/_authenticated/application'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as TalentsSlugRouteImport } from './routes/talents.$slug'
@@ -35,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -102,6 +109,12 @@ const ValueRoute = ValueRouteImport.update({
   path: '/value',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedApplicationRoute =
+  AuthenticatedApplicationRouteImport.update({
+    id: '/application',
+    path: '/application',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -120,6 +133,7 @@ const TalentsSlugRoute = TalentsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
@@ -133,12 +147,14 @@ export interface FileRoutesByFullPath {
   '/talents': typeof TalentsRouteWithChildren
   '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
+  '/application': typeof AuthenticatedApplicationRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/talents/$slug': typeof TalentsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
@@ -152,6 +168,7 @@ export interface FileRoutesByTo {
   '/talents': typeof TalentsRouteWithChildren
   '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
+  '/application': typeof AuthenticatedApplicationRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/talents/$slug': typeof TalentsSlugRoute
@@ -160,6 +177,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
@@ -173,6 +191,7 @@ export interface FileRoutesById {
   '/talents': typeof TalentsRouteWithChildren
   '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
+  '/_authenticated/application': typeof AuthenticatedApplicationRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/talents/$slug': typeof TalentsSlugRoute
@@ -181,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/apply'
     | '/auth'
     | '/community'
     | '/deal-room'
@@ -194,12 +214,14 @@ export interface FileRouteTypes {
     | '/talents'
     | '/trust'
     | '/value'
+    | '/application'
     | '/profile'
     | '/wallet'
     | '/talents/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/apply'
     | '/auth'
     | '/community'
     | '/deal-room'
@@ -213,6 +235,7 @@ export interface FileRouteTypes {
     | '/talents'
     | '/trust'
     | '/value'
+    | '/application'
     | '/profile'
     | '/wallet'
     | '/talents/$slug'
@@ -220,6 +243,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/apply'
     | '/auth'
     | '/community'
     | '/deal-room'
@@ -233,6 +257,7 @@ export interface FileRouteTypes {
     | '/talents'
     | '/trust'
     | '/value'
+    | '/_authenticated/application'
     | '/_authenticated/profile'
     | '/_authenticated/wallet'
     | '/talents/$slug'
@@ -241,6 +266,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  ApplyRoute: typeof ApplyRoute
   AuthRoute: typeof AuthRoute
   CommunityRoute: typeof CommunityRoute
   DealRoomRoute: typeof DealRoomRoute
@@ -270,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -363,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ValueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/application': {
+      id: '/_authenticated/application'
+      path: '/application'
+      fullPath: '/application'
+      preLoaderRoute: typeof AuthenticatedApplicationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -388,11 +428,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedApplicationRoute: typeof AuthenticatedApplicationRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedApplicationRoute: AuthenticatedApplicationRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
 }
@@ -414,6 +456,7 @@ const TalentsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  ApplyRoute: ApplyRoute,
   AuthRoute: AuthRoute,
   CommunityRoute: CommunityRoute,
   DealRoomRoute: DealRoomRoute,
