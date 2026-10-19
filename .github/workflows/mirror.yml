@@ -1,70 +1,51 @@
-name: Cascading Repository Mirror
+name: Mirror to Both Repos
 
 on:
   push:
-    branches:
-      - '**'
-    tags:
-      - '**'
+    branches: [main]
   workflow_dispatch:
 
 jobs:
-  # Stage 1: remix-of-my-happy-place -> my-happy-place
-  sync-remix-to-main:
-    name: Sync Remix -> Main
-    if: github.repository == 'marshm3ll0Ic3/remix-of-my-happy-place'
+  mirror:
+    name: Mirror to my-happy-place & happy-place-2
     runs-on: ubuntu-latest
     steps:
-      - name: Mirror to my-happy-place
-        env:
-          SSH_KEY: ${{ secrets.MIRROR_TO_MAIN_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-          if [ -z "$SSH_KEY" ]; then
-            echo "Error: MIRROR_TO_MAIN_KEY secret is not set."
-            exit 1
-          fi
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      - name: Set up SSH keys
+        run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.MIRROR_TO_MAIN_KEY }}" > ~/.ssh/key_main
+          echo "${{ secrets.MIRROR_TO_HP2_KEY }}" > ~/.ssh/key_hp2
+          chmod 600 ~/.ssh/key_main ~/.ssh/key_hp2
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
-          echo "Cloning source repository mirror..."
-          git clone --mirror "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" source_mirror.git
-          cd source_mirror.git
+          cat >> ~/.ssh/config <<EOF
+          Host github-main
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/key_main
+            IdentitiesOnly yes
 
-          echo "Pushing mirror to my-happy-place..."
-          git push --mirror --prune "git@github.com:marshm3ll0Ic3/my-happy-place.git"
-          echo "Successfully mirrored remix-of-my-happy-place -> my-happy-place!"
+          Host github-hp2
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/key_hp2
+            IdentitiesOnly yes
+          EOF
+          chmod 600 ~/.ssh/config
 
-  # Stage 2: my-happy-place -> happy-place-2
-  sync-main-to-hp2:
-    name: Sync Main -> happy-place-2
-    if: github.repository == 'marshm3ll0Ic3/my-happy-place'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Mirror to happy-place-2
-        env:
-          SSH_KEY: ${{ secrets.MIRROR_DEPLOY_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push to my-happy-place
         run: |
-          set -e
-          if [ -z "$SSH_KEY" ]; then
-            echo "Error: MIRROR_DEPLOY_KEY secret is not set."
-            exit 1
-          fi
+          git remote add target-main git@github-main:marshm3ll0Ic3/my-happy-place.git
+          git push target-main HEAD:main --force
+          echo "✅ Pushed to my-happy-place"
 
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-
-          echo "Cloning source repository mirror..."
-          git clone --mirror "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" source_mirror.git
-          cd source_mirror.git
-
-          echo "Pushing mirror to happy-place-2..."
-          git push --mirror --prune "git@github.com:marshm3ll0Ic3/happy-place-2.git"
-          echo "Successfully mirrored my-happy-place -> happy-place-2!"
+      - name: Push to happy-place-2
+        run: |
+          git remote add target-hp2 git@github-hp2:marshm3ll0Ic3/happy-place-2.git
+          git push target-hp2 HEAD:main --force
+          echo "✅ Pushed to happy-place-2"
