@@ -43,7 +43,8 @@ function AuthPage() {
         options: { emailRedirectTo: window.location.origin + "/wallet" },
       });
       if (error) toast.error(error.message);
-      else if (!data.session) toast.success(t("auth.checkEmail"));
+      else if (data.session) nav({ to: "/wallet" });
+      else toast.success(t("auth.checkEmail"));
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) toast.error(error.message);
