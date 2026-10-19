@@ -14,11 +14,91 @@ jobs:
     if: github.repository == 'marshm3ll0Ic3/my-happy-place'
     runs-on: ubuntu-latest
     steps:
-      - name: Configure SSH Key and Sync Mirror
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply Cloudflare and Unbranding Settings for Destination
+        run: |
+          set -e
+
+          # 1. Ensure public/_redirects exists for Cloudflare SPA routing
+          mkdir -p public
+          echo '/* /index.html 200' > public/_redirects
+
+          # 2. Remove .lovable directory if present
+          rm -rf .lovable
+
+          # 3. Clean up package.json metadata
+          if [ -f package.json ]; then
+            node -e '
+              const fs = require("fs");
+              const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+              pkg.name = "distrub";
+              pkg.description = "DiSTRUB — The attention exchange";
+              pkg.author = "marshm3ll0Ic3";
+              fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
+            '
+          fi
+
+          # 4. Clean README.md of Lovable branding
+          if [ -f README.md ]; then
+            cat << 'EOF' > README.md
+# DiSTRUB — The attention exchange
+
+The attention exchange for the creator economy.
+
+## Overview
+
+DiSTRUB is an attention exchange platform connecting creators, communities, and markets.
+
+## Development
+
+Built with Vite, React, and TanStack Start.
+
+### Getting Started
+
+```sh
+npm install
+npm run dev
+```
+
+### Production Build
+
+```sh
+npm run build
+```
+EOF
+          fi
+
+          # 5. Remove any Lovable badge components or imports across src if present
+          if [ -d src ]; then
+            find src -type f \( -name "*.tsx" -o -name "*.jsx" -o -name "*.ts" -o -name "*.js" \) -exec sed -i '/<LovableBadge/d' {} +
+            find src -type f \( -name "*.tsx" -o -name "*.jsx" -o -name "*.ts" -o -name "*.js" \) -exec sed -i '/LovableBadge/d' {} +
+          fi
+
+          # 6. Neutralize lovable telemetry reporting in src/lib/lovable-error-reporting.ts if present
+          if [ -f src/lib/lovable-error-reporting.ts ]; then
+            cat << 'EOF' > src/lib/lovable-error-reporting.ts
+export function reportLovableError(_error: unknown, _context: Record<string, unknown> = {}) {
+  // Telemetry disabled
+}
+EOF
+          fi
+
+          # 7. Commit changes if any were made
+          git config user.name "marshm3ll0Ic3"
+          git config user.email "wavecorpltd@gmail.com"
+          if ! git diff --quiet || [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: strip Lovable footprints & configure Cloudflare SPA redirects"
+          fi
+
+      - name: Configure SSH Key and Sync to happy-place-2
         env:
           MIRROR_DEPLOY_KEY: ${{ secrets.MIRROR_DEPLOY_KEY }}
           TARGET_REPO_PAT: ${{ secrets.TARGET_REPO_PAT }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
 
@@ -37,11 +117,7 @@ jobs:
             exit 1
           fi
 
-          echo "Cloning source repository mirror..."
-          git clone --mirror "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" source_mirror.git
-          cd source_mirror.git
-
-          echo "Pushing mirror to destination repository (marshm3ll0Ic3/happy-place-2)..."
-          git push --mirror --prune "$TARGET_URL"
-
+          git remote add target "$TARGET_URL"
+          git push --force target HEAD:${{ github.ref }}
+          git push --tags --force target 2>/dev/null || true
           echo "Mirror completed successfully!"
