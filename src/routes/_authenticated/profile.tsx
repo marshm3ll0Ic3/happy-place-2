@@ -47,7 +47,7 @@ function Profile() {
       <Eyebrow>{t("pr.eyebrow")}</Eyebrow>
       <div className="mt-4 flex min-w-0 items-center gap-4">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-sm bg-primary font-display text-2xl font-bold text-primary-foreground">
-          {(user.email ?? "?")[0].toUpperCase()}
+          {(user.email ?? "?").charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold md:text-3xl">{user.email}</h1>
