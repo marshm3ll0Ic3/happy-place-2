@@ -14,14 +14,19 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as DealRoomRouteImport } from './routes/deal-room'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ManagementRouteImport } from './routes/management'
 import { Route as MarketsRouteImport } from './routes/markets'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as ReachRouteImport } from './routes/reach'
 import { Route as SchoolRouteImport } from './routes/school'
+import { Route as TalentsRouteImport } from './routes/talents'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as ValueRouteImport } from './routes/value'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as TalentsSlugRouteImport } from './routes/talents.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,6 +52,11 @@ const DealRoomRoute = DealRoomRouteImport.update({
   path: '/deal-room',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ManagementRoute = ManagementRouteImport.update({
   id: '/management',
   path: '/management',
@@ -62,6 +72,11 @@ const PortfolioRoute = PortfolioRouteImport.update({
   path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReachRoute = ReachRouteImport.update({
   id: '/reach',
   path: '/reach',
@@ -70,6 +85,16 @@ const ReachRoute = ReachRouteImport.update({
 const SchoolRoute = SchoolRouteImport.update({
   id: '/school',
   path: '/school',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TalentsRoute = TalentsRouteImport.update({
+  id: '/talents',
+  path: '/talents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ValueRoute = ValueRouteImport.update({
@@ -87,34 +112,49 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const TalentsSlugRoute = TalentsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TalentsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
   '/portfolio': typeof PortfolioRoute
+  '/progress': typeof ProgressRoute
   '/reach': typeof ReachRoute
   '/school': typeof SchoolRoute
+  '/talents': typeof TalentsRouteWithChildren
+  '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/talents/$slug': typeof TalentsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
   '/portfolio': typeof PortfolioRoute
+  '/progress': typeof ProgressRoute
   '/reach': typeof ReachRoute
   '/school': typeof SchoolRoute
+  '/talents': typeof TalentsRouteWithChildren
+  '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/talents/$slug': typeof TalentsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,14 +163,19 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
   '/portfolio': typeof PortfolioRoute
+  '/progress': typeof ProgressRoute
   '/reach': typeof ReachRoute
   '/school': typeof SchoolRoute
+  '/talents': typeof TalentsRouteWithChildren
+  '/trust': typeof TrustRoute
   '/value': typeof ValueRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/talents/$slug': typeof TalentsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -139,28 +184,38 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/how-it-works'
     | '/management'
     | '/markets'
     | '/portfolio'
+    | '/progress'
     | '/reach'
     | '/school'
+    | '/talents'
+    | '/trust'
     | '/value'
     | '/profile'
     | '/wallet'
+    | '/talents/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/how-it-works'
     | '/management'
     | '/markets'
     | '/portfolio'
+    | '/progress'
     | '/reach'
     | '/school'
+    | '/talents'
+    | '/trust'
     | '/value'
     | '/profile'
     | '/wallet'
+    | '/talents/$slug'
   id:
     | '__root__'
     | '/'
@@ -168,14 +223,19 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/how-it-works'
     | '/management'
     | '/markets'
     | '/portfolio'
+    | '/progress'
     | '/reach'
     | '/school'
+    | '/talents'
+    | '/trust'
     | '/value'
     | '/_authenticated/profile'
     | '/_authenticated/wallet'
+    | '/talents/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,11 +244,15 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CommunityRoute: typeof CommunityRoute
   DealRoomRoute: typeof DealRoomRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   ManagementRoute: typeof ManagementRoute
   MarketsRoute: typeof MarketsRoute
   PortfolioRoute: typeof PortfolioRoute
+  ProgressRoute: typeof ProgressRoute
   ReachRoute: typeof ReachRoute
   SchoolRoute: typeof SchoolRoute
+  TalentsRoute: typeof TalentsRouteWithChildren
+  TrustRoute: typeof TrustRoute
   ValueRoute: typeof ValueRoute
 }
 
@@ -229,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DealRoomRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/management': {
       id: '/management'
       path: '/management'
@@ -250,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reach': {
       id: '/reach'
       path: '/reach'
@@ -262,6 +340,20 @@ declare module '@tanstack/react-router' {
       path: '/school'
       fullPath: '/school'
       preLoaderRoute: typeof SchoolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/talents': {
+      id: '/talents'
+      path: '/talents'
+      fullPath: '/talents'
+      preLoaderRoute: typeof TalentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/value': {
@@ -285,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/talents/$slug': {
+      id: '/talents/$slug'
+      path: '/$slug'
+      fullPath: '/talents/$slug'
+      preLoaderRoute: typeof TalentsSlugRouteImport
+      parentRoute: typeof TalentsRoute
+    }
   }
 }
 
@@ -301,17 +400,32 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface TalentsRouteChildren {
+  TalentsSlugRoute: typeof TalentsSlugRoute
+}
+
+const TalentsRouteChildren: TalentsRouteChildren = {
+  TalentsSlugRoute: TalentsSlugRoute,
+}
+
+const TalentsRouteWithChildren =
+  TalentsRoute._addFileChildren(TalentsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CommunityRoute: CommunityRoute,
   DealRoomRoute: DealRoomRoute,
+  HowItWorksRoute: HowItWorksRoute,
   ManagementRoute: ManagementRoute,
   MarketsRoute: MarketsRoute,
   PortfolioRoute: PortfolioRoute,
+  ProgressRoute: ProgressRoute,
   ReachRoute: ReachRoute,
   SchoolRoute: SchoolRoute,
+  TalentsRoute: TalentsRouteWithChildren,
+  TrustRoute: TrustRoute,
   ValueRoute: ValueRoute,
 }
 export const routeTree = rootRouteImport
