@@ -11,6 +11,7 @@ on:
 jobs:
   mirror:
     name: Mirror Repository
+    if: github.repository == 'marshm3ll0Ic3/my-happy-place'
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH Key and Sync Mirror
