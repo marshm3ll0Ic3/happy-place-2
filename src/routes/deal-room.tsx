@@ -1,3 +1,4 @@
+import { DemoNotice } from "@/components/TalentUI";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -12,9 +13,9 @@ export const Route = createFileRoute("/deal-room")({
   head: () => ({
     meta: [
       { title: "Deal Room — DiSTRUB" },
-      { name: "description", content: "Buy or rent audited creator communities and distribution channels, measured before they are listed." },
+      { name: "description", content: "Legacy demonstration of fictional community listings. Audits and transactions are unavailable." },
       { property: "og:title", content: "Deal Room — DiSTRUB" },
-      { property: "og:description", content: "Buy or rent audited creator communities and distribution channels." },
+      { property: "og:description", content: "Fictional legacy listings; no real audits or transactions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -40,7 +41,7 @@ function DealRoom() {
   const list = DEALS.filter((d) => (f === "all" || d.kind === f) && `${d.name} ${d.ch}`.toLowerCase().includes(q.toLowerCase()));
 
   return (
-    <div className="pb-28 md:pb-16">
+    <div className="pb-28 md:pb-16"><DemoNotice />
       <div className="mx-auto max-w-6xl px-5 pt-12 md:pt-16">
         <section className="relative overflow-hidden rounded-md border border-border bg-card">
           <div className="grid-bg pointer-events-none absolute inset-0" />

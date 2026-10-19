@@ -139,13 +139,8 @@ export function MobileTopBar() {
               <Menu className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
-              {DESKTOP_NAV.map((tab) => (
+              {[...DESKTOP_NAV,...SECONDARY_NAV].map((tab) => (
                 <DropdownMenuItem key={tab.to} asChild className="h-10 rounded-sm text-sm">
-                  <Link to={tab.to}>{t(tab.key)}</Link>
-                </DropdownMenuItem>
-              ))}
-              {[].map((tab: typeof TABS[number]) => (
-                <DropdownMenuItem key={tab.to} asChild className="hidden h-10 rounded-sm text-sm md:flex">
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}
@@ -205,6 +200,7 @@ export function CountUp({ value, className }: { value: number; className?: strin
 
 function AccountButton() {
   const { t } = useT();
+  const { text } = useTalentCopy();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -224,8 +220,8 @@ function AccountButton() {
         {t("nav.signIn")}
       </Link>
       <Link to="/apply" className="flex h-9 items-center rounded-sm bg-primary px-4 text-sm font-medium text-primary-foreground">
-        {t("nav.earlyAccess")}
-      </a>
+        {text(copy.apply)}
+      </Link>
     </>
   );
 }

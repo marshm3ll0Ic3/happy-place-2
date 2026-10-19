@@ -126,3 +126,8 @@
 .talent-textarea { display:block; width:100%; min-height:7rem; border:1px solid var(--input); background:var(--background); color:var(--foreground); border-radius:var(--radius); padding:.75rem; font-size:.875rem; }
 .talent-select:focus-visible,.talent-textarea:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
 @media(max-width:639px){.hero-shade{background:var(--hero-shade);}}
+
+progress { appearance:none; border:0; background:var(--secondary); color:var(--primary); }
+progress::-webkit-progress-bar { background:var(--secondary); }
+progress::-webkit-progress-value { background:var(--primary); }
+progress::-moz-progress-bar { background:var(--primary); }

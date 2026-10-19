@@ -5,9 +5,9 @@ export const Route = createFileRoute("/management")({
   head: () => ({
     meta: [
       { title: "Management — DiSTRUB" },
-      { name: "description", content: "Bid on creator management mandates." },
+      { name: "description", content: "Unavailable secondary management module. No mandates, bidding or financial rights are operational." },
       { property: "og:title", content: "Management — DiSTRUB" },
-      { property: "og:description", content: "Bid on creator management mandates." },
+      { property: "og:description", content: "Unavailable secondary management module. No mandates, bidding or financial rights are operational." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

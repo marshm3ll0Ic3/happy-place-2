@@ -19,7 +19,7 @@ export function TalentCard({ talent }: { talent: Talent }) {
     <div className="mt-6 flex flex-wrap justify-between gap-2 text-xs"><span>{text(copy.received)}</span><span className="font-mono tabular">{money(talent.received)} / {money(6000)}</span></div>
     <progress className="mt-2 h-1.5 w-full accent-primary" value={talent.received} max={6000} aria-label={text(copy.received)} />
     <p className="mt-3 text-xs text-muted-foreground">{text(copy.estimate)}: <span className="font-mono text-foreground">{talent.probability}%</span></p>
-    <Button asChild variant="outline" className="mt-6 w-full justify-between"><Link to="/talents/$slug" params={{ slug: talent.slug }}>{text(copy.view)}<ArrowRight /></Link></Button>
+    <Button asChild variant="outline" className="mt-6 w-full justify-between"><Link to="/talents/$slug" params={{ slug: talent.slug }} search={prev=>({...prev,section:"overview"})}>{text(copy.view)}<ArrowRight /></Link></Button>
   </article>;
 }
 

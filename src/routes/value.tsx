@@ -1,3 +1,4 @@
+import { DemoNotice } from "@/components/TalentUI";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Eyebrow } from "@/components/Eyebrow";
@@ -7,9 +8,9 @@ export const Route = createFileRoute("/value")({
   head: () => ({
     meta: [
       { title: "Value — DiSTRUB" },
-      { name: "description", content: "Get an estimated valuation of your audience." },
+      { name: "description", content: "Secondary illustrative audience calculator using a sample formula; not a verified financial valuation." },
       { property: "og:title", content: "Value — DiSTRUB" },
-      { property: "og:description", content: "Get an estimated valuation of your audience." },
+      { property: "og:description", content: "Secondary illustrative audience calculator using a sample formula; not a verified financial valuation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -41,7 +42,7 @@ function Value() {
     `h-10 rounded-sm border px-3 font-mono text-[11px] uppercase transition-colors ${on ? "border-primary bg-primary/15 text-foreground" : "border-border text-muted-foreground hover:text-foreground"}`;
 
   return (
-    <main className="mx-auto max-w-6xl px-5 pb-28 pt-10 md:pb-16 md:pt-16">
+    <><DemoNotice /><main className="mx-auto max-w-6xl px-5 pb-28 pt-10 md:pb-16 md:pt-16">
       <Eyebrow>{t("v.eyebrow")}</Eyebrow>
       <h1 className="mt-4 text-4xl font-bold md:text-6xl">{t("v.title")}</h1>
       <p className="mt-4 max-w-xl text-muted-foreground">{t("v.sub")}</p>
@@ -104,6 +105,6 @@ function Value() {
           </Link>
         </section>
       </div>
-    </main>
+    </main></>
   );
 }

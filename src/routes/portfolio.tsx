@@ -9,14 +9,17 @@ import { useT } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { currentPrice } from "@/lib/market-prices";
+import { forecastAccounting } from "@/lib/programme";
+import { DemoNotice } from "@/components/TalentUI";
+import { copy, useTalentCopy } from "@/lib/talent-copy";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
     meta: [
       { title: "Portfolio — DiSTRUB" },
-      { name: "description", content: "Track every open and closed attention contract, realized PnL and rank." },
+      { name: "description", content: "Separate support, fictional forecast examples and commercial orders. Legacy saved intentions are not executed positions." },
       { property: "og:title", content: "Portfolio — DiSTRUB" },
-      { property: "og:description", content: "Track every open and closed attention contract, realized PnL and rank." },
+      { property: "og:description", content: "Separate support, fictional forecast examples and commercial orders. Legacy saved intentions are not executed positions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -26,14 +29,14 @@ export const Route = createFileRoute("/portfolio")({
 
 type C = { tag: string; q: string; side: "YES" | "NO"; a: number; b: number; shares: number; pnl: number };
 const OPEN: C[] = [
-  { tag: "Formula 1", q: "Will the title fight stay open until the final F1 race?", side: "YES", a: 58, b: 64, shares: 780, pnl: 468 },
-  { tag: "AI Agents", q: "Will AI agents overtake crypto in global search interest?", side: "YES", a: 49, b: 57, shares: 620, pnl: 496 },
-  { tag: "Northstar", q: "Will Northstar become the most-searched sports brand?", side: "NO", a: 48, b: 54, shares: 410, pnl: -246 },
-  { tag: "Champions League", q: "Will the Champions League final exceed the attention record?", side: "YES", a: 44, b: 53, shares: 920, pnl: 828 },
+  { tag: "Formula 1", q: "Will the title fight stay open until the final F1 race?", side: "YES", a: 58, b: 64, shares: 780, pnl: 46.8 },
+  { tag: "AI Agents", q: "Will AI agents overtake crypto in global search interest?", side: "YES", a: 49, b: 57, shares: 620, pnl: 49.6 },
+  { tag: "Northstar", q: "Will Northstar become the most-searched sports brand?", side: "NO", a: 48, b: 54, shares: 410, pnl: -24.6 },
+  { tag: "Champions League", q: "Will the Champions League final exceed the attention record?", side: "YES", a: 44, b: 53, shares: 920, pnl: 82.8 },
 ];
 const CLOSED: C[] = [
-  { tag: "@MayaBloom", q: "Will @MayaBloom pass 1M followers before summer?", side: "YES", a: 36, b: 71, shares: 300, pnl: 1050 },
-  { tag: "Box office", q: "Will the summer blockbuster top weekend attention?", side: "NO", a: 62, b: 80, shares: 380, pnl: -684 },
+  { tag: "@MayaBloom", q: "Will @MayaBloom pass 1M followers before summer?", side: "YES", a: 36, b: 71, shares: 300, pnl: 105 },
+  { tag: "Box office", q: "Will the summer blockbuster top weekend attention?", side: "NO", a: 62, b: 80, shares: 380, pnl: -68.4 },
 ];
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -48,6 +51,8 @@ type DbOrder = { id: string; market_slug: string; market_question: string; marke
 
 function Portfolio() {
   const { t } = useT();
+  const { text } = useTalentCopy();
+  const [area, setArea] = useState<"support" | "forecast" | "commercial">("forecast");
   const [tab, setTab] = useState<"open" | "closed">("open");
 
   const { data: me } = useQuery({
@@ -78,17 +83,17 @@ function Portfolio() {
       tag: o.status === "cancelled" ? `${o.market_category} · ${t("pf.cancelled")}` : o.market_category,
       q: o.market_question, side: o.side === "no" ? "NO" : "YES",
       a: o.price_cents, b: cur, shares: o.shares,
-      pnl: Math.round((o.shares * (cur - o.price_cents)) / 100),
+      pnl: 0,
     };
   };
   const openList = live ? orders.filter((o) => o.status === "open").map(toC) : OPEN;
   const closedList = live ? orders.filter((o) => o.status !== "open").map(toC) : CLOSED;
   const rows = tab === "open" ? openList : closedList;
 
-  const exposure = live ? Math.round(orders.filter((o) => o.status === "open").reduce((s, o) => s + (o.shares * o.price_cents) / 100, 0)) : 3670;
-  const pnl = live ? [...openList, ...closedList].reduce((s, c) => s + c.pnl, 0) : 1914;
-  const value = live ? me!.total + pnl : 12740;
-  const fmt = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toLocaleString()} DSC`;
+  const exposure = live ? 0 : OPEN.reduce((sum, r) => sum + forecastAccounting(r.shares,r.a,r.b).cost,0);
+  const pnl = live ? 0 : OPEN.reduce((sum,r)=>sum+forecastAccounting(r.shares,r.a,r.b).unrealised,0);
+  const value = live ? (me?.total ?? 0) : exposure + pnl;
+  const fmt = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toLocaleString(undefined,{maximumFractionDigits:2})} ${live?"DSC":"SIM"}`;
 
   const stats = [
     { icon: BarChart3, k: "pf.pnl", v: <span className={pnl >= 0 ? "text-yes" : "text-no"}>{fmt(pnl)}</span>, s: t("pf.pnlSub") },
@@ -97,7 +102,7 @@ function Portfolio() {
   ];
 
   return (
-    <div className="grid-bg-wrap relative pb-28 md:pb-16">
+    <><DemoNotice /><div className="grid-bg-wrap relative pb-28 md:pb-16">
       <div className="grid-bg pointer-events-none absolute inset-x-0 top-0 h-[480px]" />
       <div className="relative mx-auto max-w-6xl px-5 pt-14 md:pt-20">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -113,6 +118,10 @@ function Portfolio() {
           </Button>
         </div>
 
+        <p className="mt-6 border-y border-border py-4 text-sm text-muted-foreground">{text(copy.archived)} {text(copy.credits)}</p>
+        <div className="mt-6 flex flex-wrap gap-2">{([ ["support",copy.support], ["forecast",copy.forecasts], ["commercial",copy.commercial] ] as const).map(([key,label])=><Button key={key} variant={area===key?"default":"outline"} onClick={()=>setArea(key)}>{text(label)}</Button>)}</div>
+        {area!=="forecast" && <div className="py-10"><h2 className="text-2xl font-semibold">{text(area==="support"?copy.support:copy.commercial)}</h2><p className="mt-3 text-muted-foreground">{text(area==="support"?["No real contributions. Support payments are not open.","Aucune contribution réelle. Paiements de soutien non ouverts.","Sin contribuciones reales. Pagos no abiertos.","Нет реальных взносов. Платежи не открыты."]:["No commercial orders. Bookings and provider payments are not configured.","Aucune commande commerciale. Réservations et paiements non configurés.","Sin pedidos comerciales. Reservas y pagos sin configurar.","Нет коммерческих заказов. Бронирование и платежи не настроены."])}</p></div>}
+        {area==="forecast" && <>
         {!live && (
           <div className="mt-10 flex items-center justify-between gap-4 rounded-md border border-border bg-card px-5 py-3 text-sm">
             <span className="text-muted-foreground">{t("pf.sample")}</span>
@@ -122,8 +131,8 @@ function Portfolio() {
         <div className={`${live ? "mt-12" : "mt-4"} grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-[1.5fr_1fr_1fr_1fr]`}>
           <div className="bg-card p-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t("pf.value")}</p>
-            <p className="font-mono tabular mt-4 text-5xl font-medium">
-              <CountUp value={value} /> <span className="text-sm text-muted-foreground">DSC</span>
+            <p className="font-mono tabular mt-4 break-words text-3xl font-medium">
+              {value.toLocaleString(undefined,{maximumFractionDigits:2})} <span className="text-sm text-muted-foreground">{live?"DSC":"SIM"}</span>
             </p>
             <div className="mt-4 flex items-end justify-between gap-4">
               <svg viewBox="0 0 80 24" preserveAspectRatio="none" className="h-10 flex-1 text-primary-glow">
@@ -150,20 +159,20 @@ function Portfolio() {
             </div>
             <div className="flex rounded-sm border border-border p-0.5">
               {(["open", "closed"] as const).map((k) => (
-                <button
+                <Button
                   key={k}
                   onClick={() => setTab(k)}
                   className={`font-mono flex items-center gap-2 rounded-sm px-3 py-1.5 text-xs uppercase transition-colors ${tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {t(`pf.${k}`)} <span className="opacity-70">{k === "open" ? openList.length : closedList.length}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
           <p className="font-mono flex items-center gap-2 border-b border-border px-6 py-2.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
             <ChevronDown className="size-3" /> {rows.length} {t("pf.count")}
           </p>
-          <div className="max-h-[420px] divide-y divide-border overflow-y-auto">
+          <div className="divide-y divide-border">
             {rows.length === 0 && (
               <div className="flex flex-col items-center gap-3 px-6 py-12 text-sm text-muted-foreground">
                 {t("pf.empty")}
@@ -192,15 +201,16 @@ function Portfolio() {
                 <Cell label={t("pf.shares")} value={r.shares.toLocaleString()} />
                 <Cell
                   label={t(tab === "open" ? "pf.live" : "pf.realized")}
-                  value={<span className={r.pnl >= 0 ? "text-yes" : "text-no"}>{r.pnl >= 0 ? "+" : "−"}{Math.abs(r.pnl)} DSC</span>}
+                  value={<span className={r.pnl >= 0 ? "text-yes" : "text-no"}>{r.pnl >= 0 ? "+" : "−"}{Math.abs(r.pnl).toLocaleString(undefined,{maximumFractionDigits:2})} {live?"DSC":"SIM"}</span>}
                 />
-                <button
+                <Button
+                  variant="outline" size="icon"
                   aria-label={t("pf.share")}
                   onClick={() => { navigator.clipboard?.writeText(window.location.href); toast.success(t("pf.copied")); }}
                   className="hidden size-9 items-center justify-center rounded-sm border border-border text-muted-foreground transition-colors hover:text-foreground md:flex"
                 >
                   <Share2 className="size-3.5" />
-                </button>
+                </Button>
               </motion.div>
             ))}
           </div>
@@ -220,8 +230,9 @@ function Portfolio() {
             {t("pf.viewClosed")} <ArrowRight />
           </Button>
         </div>
+        </>}
       </div>
-    </div>
+    </div></>
   );
 }
 
