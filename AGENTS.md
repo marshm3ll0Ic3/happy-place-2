@@ -18,3 +18,5 @@
 - New programme copy uses a shared locale-aware copy helper alongside the existing dictionaries; this preserves all four languages without mutating legacy copy.
 - Keep the imported Talent / 365 interactive demo sandboxed within /fund, with device-local simulation state and separate resource/forecast balances; never bridge account credentials or real ledgers into the uploaded prototype.
 - Use the compact navigation below the xl breakpoint, minimum-width-zero text tracks, and scrollable viewport-bounded sheets; this keeps translated navigation and account controls usable on phones and tablets.
+
+- Store account demo money, transactions and orders only in dedicated demo tables; one owner-verified atomic RPC locks balances and handles top-up, spend, order cancellation and refund idempotently, never writing legacy financial records.

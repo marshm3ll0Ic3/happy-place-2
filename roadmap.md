@@ -1,3 +1,4 @@
+- [ ] Account demo money: free separate forecast/resource balances, order debit/cancel refund, test support/commercial payments and history; preserve legacy balances and the isolated Talent / 365 prototype.
 # DiSTRUB implementation roadmap
 
 - [x] Check phone and tablet layouts, navigation, forms and Talent / 365 interactions: public pages checked at 320/390/768/1024 in all four languages, larger navigation at 1280; mobile menu, searches, circle selection and simulated forecast confirmation/balance readback passed without page errors. Account layouts improved; signed-in checks remain blocked below.

@@ -55,16 +55,15 @@ function Portfolio() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data: b } = await supabase.from("my_balances").select("*");
-      const bal = { promotional: 0, restricted: 0, convertible: 0 };
-      b?.forEach((r) => r.bucket && (bal[r.bucket as keyof typeof bal] = r.balance ?? 0));
-      return { userId: u.user.id, total: bal.promotional + bal.restricted + bal.convertible };
+      const { data: b, error } = await supabase.from("demo_wallets").select("forecast_cents").maybeSingle();
+      if (error) throw error;
+      return { userId: u.user.id, total: (b?.forecast_cents ?? 0) / 100 };
     },
   });
   const { data: orders = [] } = useQuery({
     queryKey: ["mk-orders"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("demo_orders").select("*").order("created_at", { ascending: false });
       if (error) return [] as DbOrder[];
       return (data ?? []) as DbOrder[];
     },
@@ -87,7 +86,7 @@ function Portfolio() {
 
   const exposure = live ? Math.round(orders.filter((o) => o.status === "open").reduce((s, o) => s + (o.shares * o.price_cents) / 100, 0)) : 3670;
   const pnl = live ? [...openList, ...closedList].reduce((s, c) => s + c.pnl, 0) : 1914;
-  const value = live ? me!.total + pnl : 12740;
+  const value = me ? me.total + exposure + pnl : 12740;
   const fmt = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toLocaleString()} DSC`;
 
   const stats = [

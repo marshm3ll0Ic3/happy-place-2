@@ -28,10 +28,10 @@ function Profile() {
     queryKey: ["profile-stats"],
     queryFn: async () => {
       const [b, o] = await Promise.all([
-        supabase.from("my_balances").select("*"),
-        supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "open"),
+        supabase.from("demo_wallets").select("forecast_cents,resource_cents").maybeSingle(),
+        supabase.from("demo_orders").select("id", { count: "exact", head: true }).eq("status", "open"),
       ]);
-      const total = (b.data ?? []).reduce((s, r) => s + (r.balance ?? 0), 0);
+      const total = ((b.data?.forecast_cents ?? 0) + (b.data?.resource_cents ?? 0)) / 100;
       return { total, open: o.count ?? 0 };
     },
   });
