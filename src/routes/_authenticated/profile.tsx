@@ -4,6 +4,8 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { LangSwitcher } from "@/components/AppChrome";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
+import { useTalentCopy } from "@/lib/talent-copy";
+import { demoCopy } from "@/lib/demo-money";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function Profile() {
   const { t } = useT();
+  const { text } = useTalentCopy();
   const { user } = Route.useRouteContext();
   const qc = useQueryClient();
   const nav = useNavigate();
@@ -31,7 +34,7 @@ function Profile() {
         supabase.from("demo_wallets").select("forecast_cents,resource_cents").maybeSingle(),
         supabase.from("demo_orders").select("id", { count: "exact", head: true }).eq("status", "open"),
       ]);
-      const total = ((b.data?.forecast_cents ?? 0) + (b.data?.resource_cents ?? 0)) / 100;
+      const total = (b.data?.forecast_cents ?? 0) / 100;
       return { total, open: o.count ?? 0 };
     },
   });
@@ -57,8 +60,8 @@ function Profile() {
 
       <div className="mt-8 grid gap-px border border-border bg-border sm:grid-cols-2">
         <Link to="/wallet" className="min-w-0 bg-card p-5">
-          <p className="text-[11px] text-muted-foreground">{t("wallet.total")}</p>
-          <p className="font-mono mt-1 break-words text-2xl tabular">{(data?.total ?? 0).toLocaleString()} <span className="text-xs text-muted-foreground">DSC</span></p>
+          <p className="text-[11px] text-muted-foreground">{text(demoCopy.forecast)}</p>
+          <p className="font-mono mt-1 break-words text-2xl tabular">{(data?.total ?? 0).toLocaleString()} <span className="text-xs text-muted-foreground">Demo</span></p>
         </Link>
         <Link to="/portfolio" className="bg-card p-5">
           <p className="text-[11px] text-muted-foreground">{t("pr.openOrders")}</p>
