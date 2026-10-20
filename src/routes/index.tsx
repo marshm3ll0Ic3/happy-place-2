@@ -70,6 +70,7 @@ function Landing() {
       <Hero />
       <Ticker />
       <HowItWorks />
+      <TwoLayers />
       <TrustSection />
       <AssetSection />
       <SchoolSection />
