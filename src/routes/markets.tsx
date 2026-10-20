@@ -137,6 +137,7 @@ function Markets() {
   const [amount, setAmount] = useState("500");
   const [busy, setBusy] = useState(false);
 
+  const navigate = useNavigate();
   const { data: me } = useQuery({
     queryKey: ["mk-me"],
     queryFn: async () => {
