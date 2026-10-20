@@ -83,8 +83,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#0A0B0F" },
-      { title: "DiSTRUB — Talent / 365" },
-      { name: "description", content: "Overlooked talent, essential resources and 365-day programmes. Demo only." },
+      { title: "DiSTRUB — The attention exchange" },
+      { name: "description", content: "The attention exchange for the creator economy." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

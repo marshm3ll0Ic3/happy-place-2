@@ -1,10 +1,128 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Lock } from "lucide-react";
+import { toast } from "sonner";
+import { ShellPage } from "@/components/ShellPage";
+import { CountUp } from "@/components/AppChrome";
 import { Button } from "@/components/ui/button";
-import { DemoNotice, TalentPageHeading } from "@/components/TalentUI";
-import { copy, useTalentCopy } from "@/lib/talent-copy";
-import { pageMeta } from "@/lib/route-meta";
-export const Route=createFileRoute("/_authenticated/wallet")({head:()=>pageMeta("Wallet and legacy archive","Separate money and simulation credits. View archived prototype balances and history without purchases or withdrawals."),component:Wallet});
-function Wallet(){const {user}=Route.useRouteContext();const {text,date}=useTalentCopy();const {data,isPending,isError,refetch}=useQuery({queryKey:["wallet",user.id],queryFn:async()=>{const [b,e]=await Promise.all([supabase.from("my_balances").select("*"),supabase.from("ledger_entries").select("id,amount,direction,bucket,created_at,transactions(type,description)").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50)]);if(b.error||e.error)throw new Error("Unable to read archive");return {balances:b.data??[],entries:e.data??[]};}});
-return <><DemoNotice/><main className="mx-auto max-w-3xl px-5 pb-28 pt-10"><TalentPageHeading title={text(["Wallet","Portefeuille","Billetera","Кошелёк"])} description={text(copy.credits)}/><div className="grid gap-6 border-y border-border py-6 sm:grid-cols-2"><div><p className="text-xs text-muted-foreground">{text(["Real money balance", "Solde en argent réel", "Saldo real", "Реальные деньги"])}</p><p className="mt-3 font-mono text-3xl">—</p><p className="mt-2 text-xs text-muted-foreground">{text(copy.unavailable)}</p></div><div><p className="text-xs text-muted-foreground">{text(["New forecast simulation", "Nouvelle simulation de prévision", "Nueva simulación", "Новая симуляция прогнозов"])}</p><p className="mt-3 font-mono text-3xl">0 SIM</p><p className="mt-2 text-xs text-muted-foreground">{text(["Not activated. Legacy DSC is not converted or pooled.","Non activée. Les anciens DSC ne sont ni convertis ni combinés.","No activada. DSC anteriores no se convierten ni combinan.","Не активирована. Старые DSC не конвертируются и не объединяются."])}</p></div></div><h2 className="mt-8 text-xl font-semibold">{text(["Legacy prototype archive", "Archives de l’ancien prototype", "Archivo del prototipo anterior", "Архив старого прототипа"])}</h2><p className="mt-3 text-sm text-muted-foreground">{text(copy.archived)}</p>{isPending?<p role="status" className="mt-5 text-sm">{text(["Loading archive…","Chargement des archives…","Cargando archivo…","Загрузка архива…"])}</p>:isError?<div className="mt-5"><p role="alert">{text(["Unable to load archived balances.","Archives indisponibles.","Archivo no disponible.","Архив недоступен."])}</p><Button variant="outline" className="mt-3" onClick={()=>refetch()}>{text(["Retry","Réessayer","Reintentar","Повторить"])}</Button></div>:<><div className="mt-5 grid gap-3 sm:grid-cols-3">{data?.balances.map((row,i)=><div key={row.bucket??i} className="rounded-md border border-border bg-card p-4"><p className="break-words text-xs text-muted-foreground">{row.bucket==="promotional"?text(["Promotional archive","Archives promotionnelles","Archivo promocional","Промо-архив"]):row.bucket==="restricted"?text(["Restricted archive","Archives restreintes","Archivo restringido","Ограниченный архив"]):text(["Convertible archive (locked)","Archives convertibles (bloquées)","Archivo convertible (bloqueado)","Конвертируемый архив (заблокирован)"])}</p><p className="mt-3 break-words font-mono text-xl">{(row.balance??0).toLocaleString()} <span className="text-xs">DSC</span></p></div>)}</div><h3 className="mt-8 text-lg font-semibold">{text(["Archived history", "Historique archivé", "Historial archivado", "Архивная история"])}</h3><ul className="mt-4 divide-y divide-border">{!data?.entries.length&&<li className="py-5 text-sm text-muted-foreground">{text(["No archived entries.","Aucune entrée archivée.","Sin registros archivados.","Нет архивных записей."])}</li>}{data?.entries.map(e=><li key={e.id} className="flex flex-wrap items-center justify-between gap-3 py-4"><div className="min-w-0"><p className="break-words text-sm">{e.transactions?.description??e.transactions?.type}</p><p className="mt-1 text-xs text-muted-foreground">{date(e.created_at)}</p></div><p className="font-mono text-sm">{e.direction==="credit"?"+":"−"}{e.amount.toLocaleString()} DSC</p></li>)}</ul></>}<p className="mt-8 border-t border-border pt-5 text-sm text-muted-foreground">{text(["Credit purchases, deposits, conversion and withdrawals are unavailable. No money is charged or sent.","Achats, dépôts, conversion et retraits indisponibles. Aucun argent prélevé ou envoyé.","Compras, depósitos, conversión y retiros no disponibles. No se mueve dinero.","Покупки, пополнение, конвертация и вывод недоступны. Деньги не перемещаются."])}</p></main></>}
+import { supabase } from "@/integrations/supabase/client";
+import { useT } from "@/lib/i18n";
+import { BuyCreditsSheet } from "@/components/BuyCreditsSheet";
+
+export const Route = createFileRoute("/_authenticated/wallet")({
+  head: () => ({
+    meta: [
+      { title: "Wallet — DiSTRUB" },
+      { name: "description", content: "Your DSC balances and credit purchases." },
+      { property: "og:title", content: "Wallet — DiSTRUB" },
+      { property: "og:description", content: "Your DSC balances and credit purchases." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Wallet,
+});
+
+function Wallet() {
+  const { t } = useT();
+  const qc = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ["wallet"],
+    queryFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      const [b, e, w] = await Promise.all([
+        supabase.from("my_balances").select("*"),
+        supabase
+          .from("ledger_entries")
+          .select("id, amount, direction, bucket, created_at, transactions(type, description)")
+          .order("created_at", { ascending: false })
+          .limit(50),
+        supabase.from("conversion_waitlist").select("user_id").eq("user_id", u.user!.id).maybeSingle(),
+      ]);
+      const bal = { promotional: 0, restricted: 0, convertible: 0 };
+      b.data?.forEach((r) => r.bucket && (bal[r.bucket] = r.balance ?? 0));
+      return { bal, entries: e.data ?? [], waitlisted: !!w.data, userId: u.user!.id };
+    },
+  });
+
+  async function joinWaitlist() {
+    if (!data) return;
+    const { error } = await supabase.from("conversion_waitlist").insert({ user_id: data.userId });
+    if (error) toast.error(error.message);
+    else {
+      toast.success(t("wallet.waitlistJoined"));
+      qc.invalidateQueries({ queryKey: ["wallet"] });
+    }
+  }
+
+  if (isLoading || !data)
+    return (
+      <ShellPage titleKey="nav.wallet">
+        <div className="mt-6 space-y-3">
+          <div className="glass h-32 animate-pulse rounded-sm" />
+          <div className="glass h-20 animate-pulse rounded-sm" />
+        </div>
+      </ShellPage>
+    );
+
+  const { bal, entries, waitlisted } = data;
+  const total = bal.promotional + bal.restricted + bal.convertible;
+  const rows = [
+    ["wallet.promotional", bal.promotional],
+    ["wallet.restricted", bal.restricted],
+    ["wallet.convertible", 0],
+  ] as const;
+
+  return (
+    <ShellPage titleKey="nav.wallet">
+      <div className="glass mt-6 rounded-sm p-6">
+        <p className="text-sm text-muted-foreground">{t("wallet.total")}</p>
+        <p className="font-display mt-1 text-4xl font-bold md:text-5xl">
+          <CountUp value={total} /> <span className="text-xl text-muted-foreground">DSC</span>
+        </p>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-3">
+        {rows.map(([k, v]) => (
+          <div key={k} className="glass rounded-sm p-4">
+            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+              {k === "wallet.convertible" && <Lock className="size-3" />}
+              {t(k)}
+            </p>
+            <p className="font-display mt-1 text-lg font-bold tabular md:text-2xl">
+              <CountUp value={v} />
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="glass mt-3 flex items-center justify-between gap-3 rounded-sm p-4">
+        <p className="text-xs text-muted-foreground">{t("wallet.conversionLocked")}</p>
+        <Button size="sm" variant="secondary" disabled={waitlisted} onClick={joinWaitlist} className="min-h-11 shrink-0 rounded-sm">
+          {waitlisted ? t("wallet.waitlisted") : t("wallet.joinWaitlist")}
+        </Button>
+      </div>
+
+      <h2 className="mt-8 text-xl font-bold">{t("wallet.history")}</h2>
+      <ul className="mt-3 space-y-2">
+        {entries.length === 0 && <li className="text-sm text-muted-foreground">{t("wallet.noHistory")}</li>}
+        {entries.map((e) => (
+          <li key={e.id} className="glass flex items-center justify-between gap-3 rounded-sm p-4">
+            <div>
+              <p className="text-sm font-medium">{e.transactions?.description ?? e.transactions?.type}</p>
+              <p className="text-xs text-muted-foreground">
+                {t(`wallet.${e.bucket}`)} · {new Date(e.created_at).toLocaleDateString()}
+              </p>
+            </div>
+            <p className={`font-display tabular font-bold ${e.direction === "credit" ? "text-yes" : "text-no"}`}>
+              {e.direction === "credit" ? "+" : "−"}
+              {e.amount.toLocaleString()}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <div className="fixed inset-x-0 bottom-16 px-5 pb-2 md:static md:mt-6 md:px-0">
+        <BuyCreditsSheet />
+      </div>
+    </ShellPage>
+  );
+}

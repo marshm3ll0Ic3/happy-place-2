@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { assertFinancialActionAllowed } from "@/lib/programme";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 type PlaceInput = {
@@ -17,7 +16,6 @@ export const placeOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: PlaceInput) => input)
   .handler(async ({ data, context }) => {
-    assertFinancialActionAllowed();
     const slug = data.marketSlug.trim().toLowerCase();
     const side = data.side;
     const price = Math.round(data.priceCents);
