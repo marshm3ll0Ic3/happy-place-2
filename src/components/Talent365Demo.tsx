@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import demoDocument from "@/assets/talent365-demo.html?raw";
-import { DAY_MS, PROGRAMME_DAYS, programmeDay } from "@/lib/programme";
+import { DAY_MS, PROGRAMME_DAYS } from "@/lib/programme";
 
 const STORAGE_KEY = "distrub:talent365:practice:v1";
 
@@ -30,7 +30,7 @@ export function Talent365Demo() {
 
   const document = useMemo(() => {
     if (saved === undefined) return "";
-    const setup = `const DAY_MS=${DAY_MS};const PROGRAMME_DAYS=${PROGRAMME_DAYS};const programmeDay=${programmeDay.toString()};window.__TALENT365_SAVED_STATE__=${JSON.stringify(saved).replace(/</g, "\\u003c")};`;
+    const setup = `const DAY_MS=${DAY_MS};const PROGRAMME_DAYS=${PROGRAMME_DAYS};const programmeDay=function(start,now){return Math.max(0,Math.min(PROGRAMME_DAYS,Math.floor((Date.parse(now)-Date.parse(start))/DAY_MS)+1));};window.__TALENT365_SAVED_STATE__=${JSON.stringify(saved).replace(/</g, "\\u003c")};`;
     const observer = `new ResizeObserver(()=>window.parent.postMessage({type:'talent365:height',height:Math.ceil(document.getElementById('root').getBoundingClientRect().height)},'*')).observe(document.getElementById('root'));window.addEventListener('hashchange',()=>window.parent.postMessage({type:'talent365:navigate'},'*'));`;
     return demoDocument.replace("'use strict';", `'use strict';${setup}`).replace("})();", `${observer}\n})();`);
   }, [saved]);
