@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -137,6 +137,7 @@ function Markets() {
   const [amount, setAmount] = useState("500");
   const [busy, setBusy] = useState(false);
 
+  const navigate = useNavigate();
   const { data: me } = useQuery({
     queryKey: ["mk-me"],
     queryFn: async () => {
@@ -184,7 +185,7 @@ function Markets() {
 
   async function submit() {
     if (!me) {
-      toast.info(t("mk.signInTrade"));
+      navigate({ to: "/auth" });
       return;
     }
     if (shares < 1) {
@@ -192,7 +193,9 @@ function Markets() {
       return;
     }
     if (cost > me.total) {
-      toast.error(t("mk.notEnough"));
+      toast.error(t("mk.notEnough"), {
+        action: { label: t("wallet.buy"), onClick: () => navigate({ to: "/wallet" }) },
+      });
       return;
     }
     setBusy(true);
