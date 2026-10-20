@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { CountUp } from "@/components/AppChrome";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
+import { TwoLayers } from "@/components/TwoLayers";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,6 +71,7 @@ function Landing() {
       <Hero />
       <Ticker />
       <HowItWorks />
+      <TwoLayers />
       <TrustSection />
       <AssetSection />
       <SchoolSection />
