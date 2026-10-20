@@ -449,9 +449,25 @@ export type Database = {
       }
     }
     Functions: {
+      demo_buy_pack: {
+        Args: { _nonce: string; _pack_id: string }
+        Returns: number
+      }
+      demo_cancel_order: { Args: { _order_id: string }; Returns: undefined }
       demo_money_action: {
         Args: { p_action: string; p_data?: Json; p_key: string }
         Returns: Json
+      }
+      demo_place_order: {
+        Args: {
+          _category: string
+          _price: number
+          _question: string
+          _shares: number
+          _side: string
+          _slug: string
+        }
+        Returns: number
       }
       founding_counts: { Args: never; Returns: Json }
       post_transfer: {
