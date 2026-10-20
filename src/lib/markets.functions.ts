@@ -34,11 +34,11 @@ export const placeOrder = createServerFn({ method: "POST" })
 
     const cost = orderCost(price, shares);
     const { data: bals } = await context.supabase.from("my_balances").select("*");
-    const bal: Record<string, number> = {};
+    const bal = { promotional: 0, restricted: 0, convertible: 0 };
     bals?.forEach((r) => r.bucket && (bal[r.bucket] = r.balance ?? 0));
-    const promo = Math.min(bal.promotional ?? 0, cost);
+    const promo = Math.min(bal.promotional, cost);
     const restricted = cost - promo;
-    if (restricted > (bal.restricted ?? 0)) throw new Error(`Not enough DSC — this order needs ${cost.toLocaleString()} DSC. Buy demo credits in your Wallet.`);
+    if (restricted > (bal.restricted)) throw new Error(`Not enough DSC — this order needs ${cost.toLocaleString()} DSC. Buy demo credits in your Wallet.`);
 
     const { data: order, error } = await context.supabase.from("orders").insert({
       user_id: context.userId,
