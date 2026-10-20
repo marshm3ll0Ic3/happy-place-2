@@ -15,6 +15,13 @@
       "when": 1792434352096,
       "tag": "0001_talent_application_drafts_and_demo_safety",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792487925400,
+      "tag": "0002_fix_txn_visibility_and_signup_bonus",
+      "breakpoints": true
     }
   ]
 }
