@@ -1,11 +1,11 @@
 import { z } from "zod";
 export const DEMO_TOPUPS = [1000, 5000, 25000, 100000] as const;
 export const demoActionSchema = z.discriminatedUnion("action", [
- z.object({ action: z.literal("topup"), key: z.uuid(), amount: z.union(DEMO_TOPUPS.map(n => z.literal(n))), bucket: z.enum(["forecast", "resource"]) }),
- z.object({ action: z.literal("place"), key: z.uuid(), marketSlug: z.string().regex(/^[a-z0-9-]{3,64}$/), marketQuestion: z.string().min(1).max(200), marketCategory: z.string().max(60), side: z.enum(["yes", "no"]), priceCents: z.number().int().min(1).max(99), shares: z.number().int().min(1).max(1000000) }),
- z.object({ action: z.literal("cancel"), key: z.uuid(), orderId: z.uuid() }),
- z.object({ action: z.literal("spend"), key: z.uuid(), amountCents: z.number().int().min(1).max(10000000), purpose: z.enum(["support", "commercial"]) }),
- z.object({ action: z.literal("refund"), key: z.uuid(), transactionId: z.uuid() }),
+ z.object({ action: z.literal("topup"), key: z.string().uuid(), amount: z.union([z.literal(1000), z.literal(5000), z.literal(25000), z.literal(100000)]), bucket: z.enum(["forecast", "resource"]) }),
+ z.object({ action: z.literal("place"), key: z.string().uuid(), marketSlug: z.string().regex(/^[a-z0-9-]{3,64}$/), marketQuestion: z.string().min(1).max(200), marketCategory: z.string().max(60), side: z.enum(["yes", "no"]), priceCents: z.number().int().min(1).max(99), shares: z.number().int().min(1).max(1000000) }),
+ z.object({ action: z.literal("cancel"), key: z.string().uuid(), orderId: z.string().uuid() }),
+ z.object({ action: z.literal("spend"), key: z.string().uuid(), amountCents: z.number().int().min(1).max(10000000), purpose: z.enum(["support", "commercial"]) }),
+ z.object({ action: z.literal("refund"), key: z.string().uuid(), transactionId: z.string().uuid() }),
 ]);
 export type DemoAction = z.infer<typeof demoActionSchema>;
 export const orderCostCents = (priceCents: number, shares: number) => priceCents * shares;
