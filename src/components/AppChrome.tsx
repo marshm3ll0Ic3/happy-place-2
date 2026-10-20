@@ -76,8 +76,8 @@ export const LangSwitcher = LangDropdown;
 
 
 const DESKTOP_NAV = [
-  { to: "/fund", key: "nav.fund" },
   { to: "/markets", key: "nav.markets" },
+  { to: "/fund", key: "nav.fund" },
   { to: "/portfolio", key: "nav.portfolio" },
   { to: "/deal-room", key: "nav.dealRoom" },
   { to: "/community", key: "nav.community" },
