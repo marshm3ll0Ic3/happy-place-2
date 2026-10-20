@@ -15,6 +15,7 @@ import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as DealRoomRouteImport } from './routes/deal-room'
+import { Route as FundRouteImport } from './routes/fund'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ManagementRouteImport } from './routes/management'
 import { Route as MarketsRouteImport } from './routes/markets'
@@ -57,6 +58,11 @@ const CommunityRoute = CommunityRouteImport.update({
 const DealRoomRoute = DealRoomRouteImport.update({
   id: '/deal-room',
   path: '/deal-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FundRoute = FundRouteImport.update({
+  id: '/fund',
+  path: '/fund',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/fund': typeof FundRoute
   '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/fund': typeof FundRoute
   '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRoute
   '/deal-room': typeof DealRoomRoute
+  '/fund': typeof FundRoute
   '/how-it-works': typeof HowItWorksRoute
   '/management': typeof ManagementRoute
   '/markets': typeof MarketsRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/fund'
     | '/how-it-works'
     | '/management'
     | '/markets'
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/fund'
     | '/how-it-works'
     | '/management'
     | '/markets'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community'
     | '/deal-room'
+    | '/fund'
     | '/how-it-works'
     | '/management'
     | '/markets'
@@ -270,6 +282,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CommunityRoute: typeof CommunityRoute
   DealRoomRoute: typeof DealRoomRoute
+  FundRoute: typeof FundRoute
   HowItWorksRoute: typeof HowItWorksRoute
   ManagementRoute: typeof ManagementRoute
   MarketsRoute: typeof MarketsRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/deal-room'
       fullPath: '/deal-room'
       preLoaderRoute: typeof DealRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fund': {
+      id: '/fund'
+      path: '/fund'
+      fullPath: '/fund'
+      preLoaderRoute: typeof FundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -460,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CommunityRoute: CommunityRoute,
   DealRoomRoute: DealRoomRoute,
+  FundRoute: FundRoute,
   HowItWorksRoute: HowItWorksRoute,
   ManagementRoute: ManagementRoute,
   MarketsRoute: MarketsRoute,
