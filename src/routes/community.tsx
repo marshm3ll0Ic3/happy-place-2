@@ -1,4 +1,3 @@
-import { DemoNotice } from "@/components/TalentUI";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -14,9 +13,9 @@ export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
       { title: "Community — DiSTRUB" },
-      { name: "description", content: "Legacy community preview with fictional circles and sample reputation. Research participation is not yet available." },
+      { name: "description", content: "Ask verified creators across up to ten niche communities, earn reputation and build a public trust trail." },
       { property: "og:title", content: "Community — DiSTRUB" },
-      { property: "og:description", content: "Fictional community and reputation preview; no real verification claimed." },
+      { property: "og:description", content: "Ask the people who hold attention: verified creator communities and reputation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -53,7 +52,7 @@ function Community() {
   const soon = () => toast(t("cm.discoverSoon"));
 
   return (
-    <div className="pb-28 md:pb-16"><DemoNotice />
+    <div className="pb-28 md:pb-16">
       <div className="mx-auto max-w-6xl px-5 pt-14 md:pt-20">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>

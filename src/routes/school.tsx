@@ -1,4 +1,3 @@
-import { DemoNotice } from "@/components/TalentUI";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -10,9 +9,9 @@ export const Route = createFileRoute("/school")({
   head: () => ({
     meta: [
       { title: "DiSTRUB School — Learn digital M&A" },
-      { name: "description", content: "Secondary learning programme preview. Enrolment and coaching are unavailable." },
+      { name: "description", content: "Learn to create, operate, acquire and resell profitable attention businesses." },
       { property: "og:title", content: "DiSTRUB School — Learn digital M&A" },
-      { property: "og:description", content: "Sample learning programme outlines; no operational enrolment." },
+      { property: "og:description", content: "Programs, bootcamps and coaching for buying and operating digital distribution." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -30,7 +29,7 @@ function School() {
   const { t } = useT();
   const soon = () => toast(t("sch.soon"));
   return (
-    <div className="pb-28 md:pb-16"><DemoNotice />
+    <div className="pb-28 md:pb-16">
       <div className="mx-auto max-w-6xl px-5 pt-12 md:pt-16">
         <section className="relative overflow-hidden rounded-md border border-border bg-card">
           <div className="grid-bg pointer-events-none absolute inset-0" />
@@ -94,7 +93,7 @@ function School() {
             <h2 className="mt-3 text-2xl font-semibold md:text-3xl">{t("sch.ctaT")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">{t("sch.ctaS")}</p>
           </div>
-          <Link to="/apply" className="inline-flex shrink-0 items-center gap-2 rounded-sm bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
+          <Link to="/" hash="founding" className="inline-flex shrink-0 items-center gap-2 rounded-sm bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
             {t("sch.cta")} <ArrowRight className="size-4" />
           </Link>
         </section>

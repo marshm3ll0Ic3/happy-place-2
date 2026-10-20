@@ -4,8 +4,6 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { LangSwitcher } from "@/components/AppChrome";
 import { supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
-import { copy,useTalentCopy } from "@/lib/talent-copy";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -23,12 +21,11 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function Profile() {
   const { t } = useT();
-  const { text } = useTalentCopy();
   const { user } = Route.useRouteContext();
   const qc = useQueryClient();
   const nav = useNavigate();
   const { data } = useQuery({
-    queryKey: ["profile-stats",user.id],
+    queryKey: ["profile-stats"],
     queryFn: async () => {
       const [b, o] = await Promise.all([
         supabase.from("my_balances").select("*"),
@@ -59,13 +56,13 @@ function Profile() {
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-px border border-border bg-border">
-        <Link to="/wallet" className="min-w-0 bg-card p-5">
-          <p className="text-[11px] text-muted-foreground">{text(["Legacy DSC archive","Archives DSC","Archivo DSC","Архив DSC"])}</p>
-          <p className="font-mono mt-1 break-words text-xl tabular">{(data?.total ?? 0).toLocaleString()} <span className="text-xs text-muted-foreground">DSC</span></p>
+        <Link to="/wallet" className="bg-card p-5">
+          <p className="text-[11px] text-muted-foreground">{t("wallet.total")}</p>
+          <p className="font-mono mt-1 text-2xl tabular">{(data?.total ?? 0).toLocaleString()} <span className="text-xs text-muted-foreground">DSC</span></p>
         </Link>
         <Link to="/portfolio" className="bg-card p-5">
-          <p className="text-[11px] text-muted-foreground">{text(["Saved legacy intentions","Intentions archivées","Intenciones archivadas","Архивные заявки"])}</p>
-          <p className="font-mono mt-1 break-words text-xl tabular">{data?.open ?? 0}</p>
+          <p className="text-[11px] text-muted-foreground">{t("pr.openOrders")}</p>
+          <p className="font-mono mt-1 text-2xl tabular">{data?.open ?? 0}</p>
         </Link>
       </div>
 
@@ -80,11 +77,9 @@ function Profile() {
           </Link>
         ))}
       </div>
-      <p className="mt-4 text-xs text-muted-foreground">{text(copy.archived)}</p>
-      <Button asChild variant="outline" className="mt-4 w-full"><Link to="/application">{text(copy.apply)}</Link></Button>
-      <Button variant="outline" onClick={signOut} className="mt-4 h-12 w-full rounded-sm border border-border text-sm text-no">
+      <button onClick={signOut} className="mt-4 h-12 w-full rounded-sm border border-border text-sm text-no">
         {t("auth.signOut")}
-      </Button>
+      </button>
     </main>
   );
 }

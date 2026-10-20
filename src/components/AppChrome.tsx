@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { motion, animate, useInView } from "framer-motion";
-import { BarChart3, Gem, Megaphone, Wallet, User, Search, Globe, ChevronDown, Menu, Users, Activity } from "lucide-react";
+import { BarChart3, Gem, Megaphone, Wallet, User, Search, Globe, ChevronDown, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   DropdownMenu,
@@ -12,11 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useT, LANGS, type Lang } from "@/lib/i18n";
-import { copy, useTalentCopy, type Copy } from "@/lib/talent-copy";
 
 export const TABS = [
-  { to: "/talents", key: "nav.talents", icon: Users },
-  { to: "/progress", key: "nav.progress", icon: Activity },
+  { to: "/markets", key: "nav.markets", icon: BarChart3 },
+  { to: "/value", key: "nav.value", icon: Gem },
   { to: "/reach", key: "nav.reach", icon: Megaphone },
   { to: "/wallet", key: "nav.wallet", icon: Wallet },
   { to: "/profile", key: "nav.profile", icon: User },
@@ -30,7 +29,7 @@ export function Logo() {
       </span>
       <span className="leading-none">
         <span className="font-display block text-sm font-bold tracking-tight">DISTRUB</span>
-        <span className="block text-[10px] text-muted-foreground">Talent / 365</span>
+        <span className="block text-[10px] text-muted-foreground">The attention exchange</span>
       </span>
     </Link>
   );
@@ -77,36 +76,25 @@ export const LangSwitcher = LangDropdown;
 
 
 const DESKTOP_NAV = [
-  { to: "/talents", key: "nav.talents" },
-  { to: "/progress", key: "nav.progress" },
-  { to: "/markets", key: "nav.forecasts" },
+  { to: "/markets", key: "nav.markets" },
   { to: "/portfolio", key: "nav.portfolio" },
-  { to: "/how-it-works", key: "nav.how" },
+  { to: "/deal-room", key: "nav.dealRoom" },
+  { to: "/community", key: "nav.community" },
+  { to: "/school", key: "nav.school" },
 ] as const;
-const SECONDARY_NAV = [
- {to:"/value",key:"nav.value"}, {to:"/deal-room",key:"nav.dealRoom"},
- {to:"/community",key:"nav.community"}, {to:"/school",key:"nav.school"},
- {to:"/reach",key:"nav.reach"}, {to:"/wallet",key:"nav.wallet"},
- {to:"/profile",key:"nav.profile"}, {to:"/trust",key:"nav.trust"},
-] as const;
-function useNavText() {
- const {t}=useT();const {text}=useTalentCopy();
- const labels:Record<string,Copy>={"nav.talents":copy.talents,"nav.progress":copy.progress,"nav.forecasts":copy.forecasts,"nav.how":copy.how,"nav.trust":copy.trust};
- return (key:string)=>labels[key] ? text(labels[key]) : t(key);
-}
 
 export function TopNav() {
-  const t = useNavText();
+  const { t } = useT();
   return (
     <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl lg:block">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-5">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
         <Logo />
         <nav className="flex gap-1">
           {DESKTOP_NAV.map((tab) => (
             <Link
               key={tab.to}
               to={tab.to}
-              className="rounded-sm px-2 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-sm px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "bg-secondary !text-foreground" }}
             >
               {t(tab.key)}
@@ -118,7 +106,6 @@ export function TopNav() {
             <Search className="size-4 text-muted-foreground" />
           </Link>
           <LangDropdown />
-          <DropdownMenu><DropdownMenuTrigger aria-label={t("nav.menu")} className="glass flex size-9 items-center justify-center rounded-sm"><Menu className="size-4"/></DropdownMenuTrigger><DropdownMenuContent align="end">{SECONDARY_NAV.map(item=><DropdownMenuItem asChild key={item.to}><Link to={item.to}>{t(item.key)}</Link></DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu>
           <AccountButton />
         </div>
       </div>
@@ -127,7 +114,7 @@ export function TopNav() {
 }
 
 export function MobileTopBar() {
-  const t = useNavText();
+  const { t } = useT();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl lg:hidden">
       <div className="flex h-14 items-center justify-between gap-2 px-4 md:h-16 md:px-6">
@@ -139,8 +126,13 @@ export function MobileTopBar() {
               <Menu className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
-              {[...DESKTOP_NAV,...SECONDARY_NAV].map((tab) => (
+              {DESKTOP_NAV.map((tab) => (
                 <DropdownMenuItem key={tab.to} asChild className="h-10 rounded-sm text-sm">
+                  <Link to={tab.to}>{t(tab.key)}</Link>
+                </DropdownMenuItem>
+              ))}
+              {TABS.filter((x) => x.to !== "/markets").map((tab) => (
+                <DropdownMenuItem key={tab.to} asChild className="hidden h-10 rounded-sm text-sm md:flex">
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}
@@ -153,7 +145,7 @@ export function MobileTopBar() {
 }
 
 export function BottomTabs() {
-  const t = useNavText();
+  const { t } = useT();
   const { pathname } = useLocation();
   return (
     <nav className="glass safe-bottom fixed inset-x-0 bottom-0 z-50 border-x-0 border-b-0 bg-background/80 md:hidden">
@@ -200,7 +192,6 @@ export function CountUp({ value, className }: { value: number; className?: strin
 
 function AccountButton() {
   const { t } = useT();
-  const { text } = useTalentCopy();
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -219,9 +210,9 @@ function AccountButton() {
       <Link to="/auth" className="flex h-9 items-center rounded-sm px-3 text-sm text-foreground">
         {t("nav.signIn")}
       </Link>
-      <Link to="/apply" className="flex h-9 items-center rounded-sm bg-primary px-4 text-sm font-medium text-primary-foreground">
-        {text(copy.apply)}
-      </Link>
+      <a href="/#founding" className="flex h-9 items-center rounded-sm bg-primary px-4 text-sm font-medium text-primary-foreground">
+        {t("nav.earlyAccess")}
+      </a>
     </>
   );
 }
