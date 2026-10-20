@@ -1,18 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { demoActionSchema } from "./demo-money";
 
-export const demoMoneyAction = createServerFn({ method: "POST" })
- .middleware([requireSupabaseAuth])
- .inputValidator(input => demoActionSchema.parse(input))
- .handler(async ({ data, context }) => {
-  const { action, key, ...details } = data;
-  const { error } = await context.supabase.rpc("demo_money_action", { p_action: action, p_key: key, p_data: details });
-  if (error) throw new Error(error.message);
-  return { ok: true as const };
- });
-// Legacy issuance stays disabled; new demo balances never touch the real/legacy ledger.
+// MOCK top-up: credits restricted DSC instantly without a card payment.
+// Replace with a real checkout + webhook before going live.
 export const mockBuyPack = createServerFn({ method: "POST" })
- .middleware([requireSupabaseAuth])
- .inputValidator((input: {packId: string; nonce: string}) => input)
- .handler(async () => { throw new Error("Legacy issuance is disabled. Use the free demo wallet."); });
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { packId: string; nonce: string }) => input)
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: flag } = await supabaseAdmin
+      .from("feature_flags").select("enabled").eq("key", "credit_purchase_enabled").single();
+    if (!flag?.enabled) throw new Error("Credit purchases are disabled");
+    const { data: pack } = await supabaseAdmin
+      .from("credit_packs").select("*").eq("id", data.packId).eq("active", true).single();
+    if (!pack) throw new Error("Pack not found");
+    const key = `mock:${context.userId}:${data.nonce}`;
+    const { error } = await supabaseAdmin.rpc("post_transfer", {
+      _key: key, _type: "purchase", _desc: `${pack.name} pack`,
+      _from_user: null as unknown as string, _from_system: "dsc_issuance",
+      _to_user: context.userId, _to_system: null as unknown as string,
+      _bucket: "restricted", _amount: pack.dsc_amount,
+    });
+    if (error) throw new Error(error.message);
+    await supabaseAdmin.from("payments").insert({
+      user_id: context.userId, pack_id: pack.id, stripe_session_id: key,
+      amount_cents: pack.price_cents, dsc_amount: pack.dsc_amount, status: "mock",
+    });
+    return { dsc: pack.dsc_amount };
+  });
