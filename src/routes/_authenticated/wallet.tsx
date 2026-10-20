@@ -77,24 +77,24 @@ function Wallet() {
     <ShellPage titleKey="nav.wallet">
       <div className="glass mt-6 rounded-sm p-6">
         <p className="text-sm text-muted-foreground">{t("wallet.total")}</p>
-        <p className="font-display mt-1 text-4xl font-bold md:text-5xl">
+        <p className="font-display mt-1 break-words text-4xl font-bold md:text-5xl">
           <CountUp value={total} /> <span className="text-xl text-muted-foreground">DSC</span>
         </p>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-3">
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
         {rows.map(([k, v]) => (
-          <div key={k} className="glass rounded-sm p-4">
+          <div key={k} className="glass min-w-0 rounded-sm p-4">
             <p className="flex items-center gap-1 text-xs text-muted-foreground">
-              {k === "wallet.convertible" && <Lock className="size-3" />}
+              {k === "wallet.convertible" && <Lock className="size-3 shrink-0" />}
               {t(k)}
             </p>
-            <p className="font-display mt-1 text-lg font-bold tabular md:text-2xl">
+            <p className="font-display mt-1 break-words text-lg font-bold tabular md:text-2xl">
               <CountUp value={v} />
             </p>
           </div>
         ))}
       </div>
-      <div className="glass mt-3 flex items-center justify-between gap-3 rounded-sm p-4">
+      <div className="glass mt-3 flex flex-col items-stretch gap-3 rounded-sm p-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-muted-foreground">{t("wallet.conversionLocked")}</p>
         <Button size="sm" variant="secondary" disabled={waitlisted} onClick={joinWaitlist} className="min-h-11 shrink-0 rounded-sm">
           {waitlisted ? t("wallet.waitlisted") : t("wallet.joinWaitlist")}
@@ -105,14 +105,14 @@ function Wallet() {
       <ul className="mt-3 space-y-2">
         {entries.length === 0 && <li className="text-sm text-muted-foreground">{t("wallet.noHistory")}</li>}
         {entries.map((e) => (
-          <li key={e.id} className="glass flex items-center justify-between gap-3 rounded-sm p-4">
-            <div>
+          <li key={e.id} className="glass grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-sm p-4">
+            <div className="min-w-0 break-words">
               <p className="text-sm font-medium">{e.transactions?.description ?? e.transactions?.type}</p>
               <p className="text-xs text-muted-foreground">
                 {t(`wallet.${e.bucket}`)} · {new Date(e.created_at).toLocaleDateString()}
               </p>
             </div>
-            <p className={`font-display tabular font-bold ${e.direction === "credit" ? "text-yes" : "text-no"}`}>
+            <p className={`font-display max-w-32 break-words text-right tabular font-bold ${e.direction === "credit" ? "text-yes" : "text-no"}`}>
               {e.direction === "credit" ? "+" : "−"}
               {e.amount.toLocaleString()}
             </p>
@@ -120,7 +120,7 @@ function Wallet() {
         ))}
       </ul>
 
-      <div className="fixed inset-x-0 bottom-16 px-5 pb-2 md:static md:mt-6 md:px-0">
+      <div className="mt-6">
         <BuyCreditsSheet />
       </div>
     </ShellPage>
