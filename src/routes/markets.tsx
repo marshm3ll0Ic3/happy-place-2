@@ -8,15 +8,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { useT } from "@/lib/i18n";
-import { cancelOrder, placeOrder } from "@/lib/markets.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { demoMoneyAction } from "@/lib/wallet.functions";
+import { orderCostCents } from "@/lib/demo-money";
 
 export const Route = createFileRoute("/markets")({
   head: () => ({
     meta: [
       { title: "Markets — DiSTRUB" },
-      { name: "description", content: "Browse live YES/NO markets on creator attention, chart the price and place an order." },
+      { name: "description", content: "Browse sample YES/NO markets and test orders with free demo forecast credits." },
       { property: "og:title", content: "Markets — DiSTRUB" },
-      { property: "og:description", content: "Browse live YES/NO markets on creator attention, chart the price and place an order." },
+      { property: "og:description", content: "Browse sample YES/NO markets and test orders with free demo forecast credits." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -128,6 +130,7 @@ type Order = {
 };
 
 function Markets() {
+  const demoAction = useServerFn(demoMoneyAction);
   const { t } = useT();
   const qc = useQueryClient();
   const [q, setQ] = useState("");
@@ -143,17 +146,16 @@ function Markets() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data: b } = await supabase.from("my_balances").select("*");
-      const bal = { promotional: 0, restricted: 0, convertible: 0 };
-      b?.forEach((r) => r.bucket && (bal[r.bucket as keyof typeof bal] = r.balance ?? 0));
-      return { userId: u.user.id, total: bal.promotional + bal.restricted + bal.convertible };
+      const { data: b, error } = await supabase.from("demo_wallets").select("forecast_cents").maybeSingle();
+      if (error) throw error;
+      return { userId: u.user.id, total: (b?.forecast_cents ?? 0) / 100 };
     },
   });
 
   const { data: orders = [] } = useQuery({
     queryKey: ["mk-orders"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("demo_orders").select("*").order("created_at", { ascending: false });
       if (error) return [] as Order[];
       return (data ?? []) as Order[];
     },
@@ -180,7 +182,7 @@ function Markets() {
   const price = side === "yes" ? m.yes : 100 - m.yes;
   const amt = Math.max(0, Math.round(Number(amount) || 0));
   const shares = Math.floor((amt * 100) / price);
-  const cost = (shares * price) / 100;
+  const cost = orderCostCents(price, shares) / 100;
   const payout = shares;
 
   async function submit() {
@@ -198,8 +200,9 @@ function Markets() {
     }
     setBusy(true);
     try {
-      await placeOrder({
+      await demoAction({
         data: {
+          action: "place", key: crypto.randomUUID(),
           marketSlug: m.slug,
           marketQuestion: m.q,
           marketCategory: m.cat,
@@ -210,6 +213,9 @@ function Markets() {
       });
       toast.success(t("mk.placed"));
       qc.invalidateQueries({ queryKey: ["mk-orders"] });
+      qc.invalidateQueries({ queryKey: ["mk-me"] });
+      qc.invalidateQueries({ queryKey: ["demo-wallet"] });
+      qc.invalidateQueries({ queryKey: ["profile-stats"] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("mk.error"));
     } finally {
@@ -220,9 +226,12 @@ function Markets() {
   async function cancel(id: string) {
     setBusy(true);
     try {
-      await cancelOrder({ data: { orderId: id } });
+      await demoAction({ data: { action: "cancel", key: crypto.randomUUID(), orderId: id } });
       toast.success(t("mk.cancelledToast"));
       qc.invalidateQueries({ queryKey: ["mk-orders"] });
+      qc.invalidateQueries({ queryKey: ["mk-me"] });
+      qc.invalidateQueries({ queryKey: ["demo-wallet"] });
+      qc.invalidateQueries({ queryKey: ["profile-stats"] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("mk.error"));
     } finally {
