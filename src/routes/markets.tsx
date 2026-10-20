@@ -259,9 +259,9 @@ function Markets() {
           </span>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-2 md:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-md border border-border bg-border lg:grid-cols-4">
           {stats.map(({ icon: Icon, k, v, s }) => (
-            <div key={k} className="flex flex-col bg-card p-6">
+            <div key={k} className="flex min-w-0 flex-col bg-card p-4 sm:p-6">
               <Icon className="size-4 text-primary" />
               <p className="font-mono mt-auto pt-6 text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t(k)}</p>
               <p className="font-mono tabular mt-2 text-2xl font-medium">{v}</p>
@@ -271,44 +271,44 @@ function Markets() {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 rounded-md border border-border bg-card p-4 lg:flex-row lg:items-center lg:justify-between">
-          <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-sm border border-border px-3">
+          <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-sm border border-border px-3">
             <Search className="size-3.5 shrink-0 text-muted-foreground" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("mk.search")}
-              className="font-mono w-full bg-transparent text-xs uppercase outline-none placeholder:text-muted-foreground"
+              className="font-mono min-w-0 w-full bg-transparent text-xs uppercase outline-none placeholder:text-muted-foreground"
             />
             {q && (
-              <button aria-label={t("mk.clear")} onClick={() => setQ("")} className="text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="icon" aria-label={t("mk.clear")} onClick={() => setQ("")} className="size-10 shrink-0 text-muted-foreground hover:text-foreground">
                 <X className="size-3.5" />
-              </button>
+              </Button>
             )}
           </label>
           <div className="flex flex-wrap gap-1">
             {(["all", "trending", "closing", "new"] as const).map((k) => (
-              <button
+              <Button variant="outline"
                 key={k}
                 onClick={() => setFilter(k)}
-                className={`font-mono rounded-sm border px-3 py-1.5 text-[11px] uppercase transition-colors ${
+                className={`font-mono min-h-11 h-auto whitespace-normal rounded-sm border px-3 py-2 text-[11px] uppercase transition-colors ${
                   filter === k ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t(`mk.f_${k}`)}
-              </button>
+              </Button>
             ))}
           </div>
-          <div className="flex gap-1">
+          <div className="flex flex-wrap gap-1">
             {(["vol", "move", "time"] as const).map((k) => (
-              <button
+              <Button variant="ghost"
                 key={k}
                 onClick={() => setSort(k)}
-                className={`font-mono rounded-sm px-3 py-1.5 text-[11px] uppercase transition-colors ${
+                className={`font-mono min-h-11 h-auto whitespace-normal rounded-sm px-3 py-2 text-[11px] uppercase transition-colors ${
                   sort === k ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t(`mk.s_${k}`)}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -430,15 +430,15 @@ function Markets() {
                   className="font-mono tabular mt-1.5 h-11 w-full rounded-sm border border-border bg-transparent px-3 text-sm outline-none focus:border-primary/60"
                 />
               </label>
-              <div className="mt-2 flex gap-1">
+              <div className="mt-2 grid grid-cols-4 gap-1">
                 {[100, 500, 1000, 5000].map((v) => (
-                  <button
+                  <Button variant="outline"
                     key={v}
                     onClick={() => setAmount(String(v))}
-                    className="font-mono rounded-sm border border-border px-2.5 py-1 text-[10px] uppercase text-muted-foreground transition-colors hover:text-foreground"
+                    className="font-mono min-h-11 min-w-0 rounded-sm border border-border px-1 py-1 text-[10px] uppercase text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {v}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -535,9 +535,9 @@ function Markets() {
 
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">{k}</dt>
-      <dd className="font-mono tabular text-sm">{v}</dd>
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-start gap-3">
+      <dt className="font-mono min-w-0 break-words text-[11px] uppercase tracking-[0.08em] text-muted-foreground">{k}</dt>
+      <dd className="font-mono min-w-0 break-words text-right tabular text-sm">{v}</dd>
     </div>
   );
 }
