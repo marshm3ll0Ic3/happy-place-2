@@ -62,9 +62,9 @@ function Community() {
             </motion.h1>
             <p className="mt-5 max-w-lg text-muted-foreground">{t("cm.sub")}</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="h-11 rounded-sm px-4" onClick={() => document.getElementById("circles")?.scrollIntoView({ behavior: "smooth" })}>{t("cm.edit")}</Button>
-            <Button className="h-11 rounded-sm px-4" onClick={soon}><Plus /> {t("cm.askq")}</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" className="min-h-11 h-auto max-w-full whitespace-normal rounded-sm px-4 py-2" onClick={() => document.getElementById("circles")?.scrollIntoView({ behavior: "smooth" })}>{t("cm.edit")}</Button>
+            <Button className="min-h-11 h-auto max-w-full whitespace-normal rounded-sm px-4 py-2" onClick={soon}><Plus /> {t("cm.askq")}</Button>
           </div>
         </div>
 
@@ -99,12 +99,12 @@ function Community() {
         </ol>
 
         <section id="circles" className="mt-16 scroll-mt-24">
-          <div className="flex items-end justify-between gap-4">
-            <div>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
+            <div className="min-w-0">
               <h2 className="text-2xl font-semibold">{t("cm.choose")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{t("cm.chooseSub")}</p>
             </div>
-            <span className="font-mono rounded-sm border border-border px-3 py-1.5 text-xs text-primary">{sel.length}/10</span>
+            <span className="font-mono shrink-0 rounded-sm border border-border px-3 py-1.5 text-xs text-primary">{sel.length}/10</span>
           </div>
           <div className="relative mt-5">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -133,9 +133,9 @@ function Community() {
               );
             })}
           </div>
-          <div className="sticky bottom-20 z-10 mx-auto mt-6 flex max-w-2xl items-center justify-between gap-4 rounded-md border border-border bg-card p-4 md:bottom-4">
-            <p className="text-sm text-muted-foreground">{sel.length ? `${sel.length} ${t("cm.ready")}` : t("cm.lock")}</p>
-            <Button disabled={!sel.length} className="h-10 shrink-0 rounded-sm" onClick={soon}>{t("cm.discover")} <ArrowRight /></Button>
+          <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 mx-auto mt-6 flex max-w-2xl flex-col items-stretch gap-4 rounded-md border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between md:bottom-4">
+            <p className="min-w-0 text-sm text-muted-foreground">{sel.length ? `${sel.length} ${t("cm.ready")}` : t("cm.lock")}</p>
+            <Button disabled={!sel.length} className="min-h-11 h-auto shrink-0 whitespace-normal rounded-sm py-2" onClick={soon}>{t("cm.discover")} <ArrowRight /></Button>
           </div>
         </section>
 

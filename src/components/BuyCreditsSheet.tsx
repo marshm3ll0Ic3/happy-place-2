@@ -42,26 +42,26 @@ export function BuyCreditsSheet() {
           {t("wallet.buy")}
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="glass bg-popover safe-bottom">
+      <DrawerContent className="glass max-h-[85dvh] overflow-y-auto bg-popover safe-bottom">
         <DrawerHeader>
           <DrawerTitle className="font-display text-2xl">{t("wallet.buy")}</DrawerTitle>
         </DrawerHeader>
         <div className="space-y-3 px-4 pb-4">
           {(packs ?? []).map((p) => (
-            <button
+            <Button variant="outline"
               key={p.id}
               disabled={!!busy}
               onClick={() => pick(p.id)}
-              className="glass flex min-h-16 w-full items-center justify-between rounded-2xl p-4 text-left transition-transform active:scale-[0.98] disabled:opacity-50"
+              className="glass grid min-h-16 h-auto w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl p-4 text-left transition-transform active:scale-[0.98] disabled:opacity-50"
             >
-              <div>
-                <p className="font-display text-lg font-bold">{p.name}</p>
-                <p className="tabular text-sm text-primary">{p.dsc_amount.toLocaleString()} DSC</p>
-              </div>
+              <span className="min-w-0 whitespace-normal break-words">
+                <span className="font-display block text-lg font-bold">{p.name}</span>
+                <span className="block tabular text-sm text-primary">{p.dsc_amount.toLocaleString()} DSC</span>
+              </span>
               <span className="font-display tabular text-xl font-bold">
                 {busy === p.id ? "…" : `${(p.price_cents / 100).toFixed(0)} €`}
               </span>
-            </button>
+            </Button>
           ))}
           <p className="pt-2 text-xs text-muted-foreground">{t("legal.purchasedUse")}</p>
           <p className="text-xs text-primary">{t("wallet.demoMode")}</p>

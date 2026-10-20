@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useT, LANGS, type Lang } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 
 export const TABS = [
   { to: "/markets", key: "nav.markets", icon: BarChart3 },
@@ -23,11 +24,11 @@ export const TABS = [
 
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2.5">
-      <span className="flex size-9 items-center justify-center rounded-sm bg-primary font-display text-base font-bold text-primary-foreground">
+    <Link to="/" className="flex min-w-0 items-center gap-2.5">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-primary font-display text-base font-bold text-primary-foreground">
         D
       </span>
-      <span className="leading-none">
+      <span className="min-w-0 leading-none">
         <span className="font-display block text-sm font-bold tracking-tight">DISTRUB</span>
         <span className="block text-[10px] text-muted-foreground">The attention exchange</span>
       </span>
@@ -46,13 +47,15 @@ export function LangDropdown() {
   const { lang, setLang, t } = useT();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline"
         aria-label={t("lang")}
-        className="glass flex h-9 items-center gap-2 rounded-sm px-3 font-mono text-[11px] uppercase text-foreground outline-none transition-colors hover:text-foreground data-[state=open]:border-primary/50"
+        className="glass flex h-11 shrink-0 items-center gap-2 rounded-sm px-3 font-mono text-[11px] uppercase text-foreground outline-none transition-colors hover:text-foreground data-[state=open]:border-primary/50"
       >
         <Globe className="size-3.5 text-muted-foreground" />
         <span>{lang}</span>
         <ChevronDown className="size-3 text-muted-foreground" />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
         <DropdownMenuRadioGroup value={lang} onValueChange={(v) => setLang(v as Lang)}>
@@ -60,7 +63,7 @@ export function LangDropdown() {
             <DropdownMenuRadioItem
               key={l}
               value={l}
-              className="flex h-9 gap-3 rounded-sm font-mono text-[11px] uppercase"
+              className="flex h-11 gap-3 rounded-sm font-mono text-[11px] uppercase"
             >
               <span className="w-5 shrink-0">{l}</span>
               <span className="font-sans text-xs normal-case text-muted-foreground">{LANG_NAMES[l]}</span>
@@ -87,10 +90,10 @@ const DESKTOP_NAV = [
 export function TopNav() {
   const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl lg:block">
+    <header className="sticky top-0 z-40 hidden border-b border-border bg-background/95 backdrop-blur-xl xl:block">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
         <Logo />
-        <nav className="flex gap-1">
+        <nav className="flex shrink-0 gap-1 whitespace-nowrap">
           {DESKTOP_NAV.map((tab) => (
             <Link
               key={tab.to}
@@ -102,7 +105,7 @@ export function TopNav() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
           <Link to="/markets" aria-label={t("nav.search")} className="glass flex size-9 items-center justify-center rounded-sm">
             <Search className="size-4 text-muted-foreground" />
           </Link>
@@ -117,23 +120,25 @@ export function TopNav() {
 export function MobileTopBar() {
   const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl lg:hidden">
-      <div className="flex h-14 items-center justify-between gap-2 px-4 md:h-16 md:px-6">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl xl:hidden">
+      <div className="grid h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 md:h-16 md:px-6">
         <Logo />
         <div className="flex shrink-0 items-center gap-2">
           <LangDropdown />
           <DropdownMenu>
-            <DropdownMenuTrigger aria-label={t("nav.menu")} className="glass flex size-9 items-center justify-center rounded-sm outline-none">
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" aria-label={t("nav.menu")} className="glass flex size-11 shrink-0 items-center justify-center rounded-sm outline-none">
               <Menu className="size-4" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-48 rounded-sm border-border bg-popover p-1">
               {DESKTOP_NAV.map((tab) => (
-                <DropdownMenuItem key={tab.to} asChild className="h-10 rounded-sm text-sm">
+                <DropdownMenuItem key={tab.to} asChild className="min-h-11 rounded-sm text-sm">
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}
               {TABS.filter((x) => x.to !== "/markets").map((tab) => (
-                <DropdownMenuItem key={tab.to} asChild className="hidden h-10 rounded-sm text-sm md:flex">
+                <DropdownMenuItem key={tab.to} asChild className="hidden min-h-11 rounded-sm text-sm md:flex">
                   <Link to={tab.to}>{t(tab.key)}</Link>
                 </DropdownMenuItem>
               ))}
@@ -150,14 +155,16 @@ export function BottomTabs() {
   const { pathname } = useLocation();
   return (
     <nav className="glass safe-bottom fixed inset-x-0 bottom-0 z-50 border-x-0 border-b-0 bg-background/80 md:hidden">
-      <div className="flex">
+      <div className="grid grid-cols-5">
         {TABS.map(({ to, key, icon: Icon }) => {
           const active = pathname.startsWith(to);
           return (
             <Link
               key={to}
               to={to}
-              className="relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px]"
+              aria-label={t(key)}
+              aria-current={active ? "page" : undefined}
+              className="relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 px-1 text-[11px]"
             >
               {active && (
                 <motion.span
@@ -166,7 +173,7 @@ export function BottomTabs() {
                 />
               )}
               <Icon className={active ? "size-5 text-primary" : "size-5 text-muted-foreground"} />
-              <span className={active ? "text-foreground" : "text-muted-foreground"}>{t(key)}</span>
+              <span className={`w-full truncate text-center ${active ? "text-foreground" : "text-muted-foreground"}`}>{t(key)}</span>
             </Link>
           );
         })}
