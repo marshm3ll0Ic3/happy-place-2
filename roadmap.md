@@ -1,5 +1,6 @@
 # DiSTRUB implementation roadmap
 
+- [ ] Integrate the uploaded standalone demo inside Talent / 365 only; preserve other pages and isolate simulated activity.
 - [x] Phase 1: Establish talent-led discovery, profiles, budgets and progress; correct accounting units and demo/credit boundaries; preserve accounts and old URLs.
 - [x] Phase 2 foundation: private saved application drafts and submission with ownership and eligibility validation.
 - [ ] Phase 2 remaining: authorised review/operations, programme records, simulated expense processing and final assessment.
