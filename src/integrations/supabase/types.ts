@@ -56,6 +56,120 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_orders: {
+        Row: {
+          cost_cents: number
+          created_at: string
+          id: string
+          market_category: string
+          market_question: string
+          market_slug: string
+          price_cents: number
+          shares: number
+          side: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cost_cents: number
+          created_at?: string
+          id?: string
+          market_category: string
+          market_question: string
+          market_slug: string
+          price_cents: number
+          shares: number
+          side: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cost_cents?: number
+          created_at?: string
+          id?: string
+          market_category?: string
+          market_question?: string
+          market_slug?: string
+          price_cents?: number
+          shares?: number
+          side?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      demo_transactions: {
+        Row: {
+          amount_cents: number
+          bucket: string
+          created_at: string
+          description: string
+          id: string
+          kind: string
+          order_id: string | null
+          refund_of: string | null
+          request_key: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          bucket: string
+          created_at?: string
+          description: string
+          id?: string
+          kind: string
+          order_id?: string | null
+          refund_of?: string | null
+          request_key: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          bucket?: string
+          created_at?: string
+          description?: string
+          id?: string
+          kind?: string
+          order_id?: string | null
+          refund_of?: string | null
+          request_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "demo_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_transactions_refund_of_fkey"
+            columns: ["refund_of"]
+            isOneToOne: true
+            referencedRelation: "demo_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demo_wallets: {
+        Row: {
+          forecast_cents: number
+          resource_cents: number
+          user_id: string
+        }
+        Insert: {
+          forecast_cents?: number
+          resource_cents?: number
+          user_id: string
+        }
+        Update: {
+          forecast_cents?: number
+          resource_cents?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       feature_flags: {
         Row: {
           enabled: boolean
@@ -335,6 +449,10 @@ export type Database = {
       }
     }
     Functions: {
+      demo_money_action: {
+        Args: { p_action: string; p_data?: Json; p_key: string }
+        Returns: Json
+      }
       founding_counts: { Args: never; Returns: Json }
       post_transfer: {
         Args: {

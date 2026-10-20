@@ -209,7 +209,7 @@ function Markets() {
         },
       });
       toast.success(t("mk.placed"));
-      qc.invalidateQueries({ queryKey: ["mk-orders"] });
+      qc.invalidateQueries();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("mk.error"));
     } finally {
@@ -222,7 +222,7 @@ function Markets() {
     try {
       await cancelOrder({ data: { orderId: id } });
       toast.success(t("mk.cancelledToast"));
-      qc.invalidateQueries({ queryKey: ["mk-orders"] });
+      qc.invalidateQueries();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t("mk.error"));
     } finally {

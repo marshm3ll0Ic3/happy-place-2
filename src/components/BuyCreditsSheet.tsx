@@ -27,7 +27,7 @@ export function BuyCreditsSheet() {
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
         confetti({ particleCount: 120, spread: 70, origin: { y: 0.8 } });
       toast.success(`+${r.dsc.toLocaleString()} DSC`);
-      qc.invalidateQueries({ queryKey: ["wallet"] });
+      qc.invalidateQueries();
       setOpen(false);
     } catch (e) {
       toast.error((e as Error).message);
