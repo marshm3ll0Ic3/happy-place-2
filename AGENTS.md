@@ -16,3 +16,4 @@
 - Use one shared integer-minor-unit accounting helper and UTC elapsed-day lifecycle helper; all screens must use identical units and programme deadlines.
 - Keep route-level share metadata and URL-backed discovery filters; profile navigation must carry catalogue search state.
 - New programme copy uses a shared locale-aware copy helper alongside the existing dictionaries; this preserves all four languages without mutating legacy copy.
+- Keep the imported Talent / 365 interactive demo sandboxed within /fund, with device-local simulation state and separate resource/forecast balances; never bridge account credentials or real ledgers into the uploaded prototype.
