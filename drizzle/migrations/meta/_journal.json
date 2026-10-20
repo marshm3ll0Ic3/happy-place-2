@@ -22,6 +22,13 @@
       "when": 1792487925400,
       "tag": "0002_fix_txn_visibility_and_signup_bonus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792488292876,
+      "tag": "0003_client_safe_demo_purchase_and_orders",
+      "breakpoints": true
     }
   ]
 }

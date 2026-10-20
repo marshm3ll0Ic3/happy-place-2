@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { useT } from "@/lib/i18n";
-import { cancelOrder, placeOrder } from "@/lib/markets.functions";
 
 export const Route = createFileRoute("/markets")({
   head: () => ({
@@ -198,16 +197,8 @@ function Markets() {
     }
     setBusy(true);
     try {
-      await placeOrder({
-        data: {
-          marketSlug: m.slug,
-          marketQuestion: m.q,
-          marketCategory: m.cat,
-          side,
-          priceCents: price,
-          shares,
-        },
-      });
+      const { error } = await supabase.rpc("demo_place_order", { _slug: m.slug, _question: m.q, _category: m.cat, _side: side, _price: price, _shares: shares });
+      if (error) throw new Error(error.message);
       toast.success(t("mk.placed"));
       qc.invalidateQueries();
     } catch (e) {
@@ -220,7 +211,8 @@ function Markets() {
   async function cancel(id: string) {
     setBusy(true);
     try {
-      await cancelOrder({ data: { orderId: id } });
+      const { error } = await supabase.rpc("demo_cancel_order", { _order_id: id });
+      if (error) throw new Error(error.message);
       toast.success(t("mk.cancelledToast"));
       qc.invalidateQueries();
     } catch (e) {

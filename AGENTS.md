@@ -18,3 +18,4 @@
 - New programme copy uses a shared locale-aware copy helper alongside the existing dictionaries; this preserves all four languages without mutating legacy copy.
 - Keep the imported Talent / 365 interactive demo sandboxed within /fund, with device-local simulation state and separate resource/forecast balances; never bridge account credentials or real ledgers into the uploaded prototype.
 - Use the compact navigation below the xl breakpoint, minimum-width-zero text tracks, and scrollable viewport-bounded sheets; this keeps translated navigation and account controls usable on phones and tablets.
+- Demo credit purchases and market orders run through signed-in database actions called from the browser, not server functions; the app is also hosted on the owner's own Cloudflare Worker, which has no server-side backend keys.

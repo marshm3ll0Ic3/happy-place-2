@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { mockBuyPack } from "@/lib/wallet.functions";
 import { useT } from "@/lib/i18n";
 
 export function BuyCreditsSheet() {
   const { t } = useT();
   const qc = useQueryClient();
-  const buy = useServerFn(mockBuyPack);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const { data: packs } = useQuery({
@@ -23,7 +20,9 @@ export function BuyCreditsSheet() {
   async function pick(id: string) {
     setBusy(id);
     try {
-      const r = await buy({ data: { packId: id, nonce: crypto.randomUUID() } });
+      const { data: dsc, error } = await supabase.rpc("demo_buy_pack", { _pack_id: id, _nonce: crypto.randomUUID() });
+      if (error) throw new Error(error.message);
+      const r = { dsc: dsc ?? 0 };
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches)
         confetti({ particleCount: 120, spread: 70, origin: { y: 0.8 } });
       toast.success(`+${r.dsc.toLocaleString()} DSC`);
